@@ -286,3 +286,11 @@ __pycache__/
 *.btm.cs
 *.odx.cs
 *.xsd.cs
+
+Final Project/Debug/
+Final Project/glm/
+Final Project/Final Project.vcxproj
+Final Project/Final Project.vcxproj.filters
+Final Project/glfw3.dll
+Final Project/glew32.dll
+
