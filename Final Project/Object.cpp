@@ -41,20 +41,6 @@ void Object::setUpObject()
 	glBindVertexArray(0);
 }
 
-// TO BE CALLED AS THE LAST LINE OF THE UPDATE FUNCTION
-void Object::setUniformsAndDraw()
-{
-	// Set uniforms
-	setModelMatrix();
-	setColor();
-
-	// Implement color for object
-	glBindVertexArray(VAO);
-	// Perhaps switch to EBO?
-	glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-	glBindVertexArray(0);
-}
-
 void Object::destroy()
 {
 	glDeleteVertexArrays(1, &VAO);
@@ -91,6 +77,36 @@ void Object::setModelMatrix()
 void Object::setColor()
 {
 	shader->setVec3("our_color", color);
+}
+
+// When overriding this, put Object::initState(); at the top
+void Object::initState()
+{
+	model_matrix = glm::mat4(1.0f);
+	// color = glm::vec3(0.0f);
+}
+
+// If you need to execute this specific code when you override this function,
+// call: Object::drawState()
+void Object::drawState()
+{
+	// Set uniforms
+	setModelMatrix();
+	setColor();
+
+	// Implement color for object
+	glBindVertexArray(VAO);
+	// Perhaps switch to EBO?
+	glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+	glBindVertexArray(0);
+}
+
+// Not meant to be overriden
+void Object::update()
+{
+	initState();
+	modState();
+	drawState();
 }
 
 bool Object::loadOBJ(

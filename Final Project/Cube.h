@@ -10,8 +10,7 @@ private:
 public:
 	Cube(Shader* shader, const glm::vec3& m);
 	~Cube();
-	void create();
-	void update();
+	void modState();
 
 };
 
