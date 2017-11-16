@@ -3,14 +3,17 @@
 #include <cstring>
 #include <iostream>
 
+// static constants here
+const GLfloat Object::SCALE = 0.05f;
+
 Object::Object(const std::string& file_name, Shader* shader)
+	: BaseObject(shader)
 {
 	// Improve error-handling here
 	if (loadOBJ(file_name.c_str(), vertices, normals, UVs))
 	{
 		setUpObject();
 	}
-	this->shader = shader;
 	model_matrix = glm::mat4(1.0f);
 }
 
@@ -83,6 +86,7 @@ void Object::setColor()
 void Object::initState()
 {
 	model_matrix = glm::mat4(1.0f);
+	scale(SCALE);
 	// color = glm::vec3(0.0f);
 }
 

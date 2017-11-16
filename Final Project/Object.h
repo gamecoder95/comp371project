@@ -1,14 +1,15 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
-#include "Shader.h"
+#include "BaseObject.h"
 #include <vector>
 
-class Object
+class Object : public BaseObject
 {
 protected:
 	glm::mat4 model_matrix;
 	glm::vec3 color; // To be modified when we implement light
+	static const GLfloat SCALE;
 
 	GLuint VAO;
 	GLuint VBO_vertices;
@@ -18,8 +19,6 @@ protected:
 	std::vector<glm::vec3> vertices;
 	std::vector<glm::vec3> normals;
 	std::vector<glm::vec2> UVs;
-
-	Shader* shader;
 
 	bool loadOBJ(
 		const char* path,
@@ -40,7 +39,7 @@ protected:
 
 public:
 
-	static const GLfloat SCALE;
+	
 
 	Object(const std::string& file_name, Shader* shader);
 	virtual ~Object();
@@ -54,7 +53,5 @@ public:
 	void destroy();
 	// bool testCollision(const Object& other); 
 };
-
-const GLfloat Object::SCALE = 0.05;
 
 #endif
