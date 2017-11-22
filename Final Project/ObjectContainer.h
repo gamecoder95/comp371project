@@ -1,7 +1,7 @@
 #ifndef OBJECTCONTAINER_H
 #define OBJECTCONTAINER_H
 
-#include "Object.h"
+#include "VirtualWorldContent.h"
 
 // Make fully static?
 

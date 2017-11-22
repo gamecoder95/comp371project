@@ -1,10 +1,13 @@
-#include "Object.h"
+#include "stdafx.h"
+
+#include "VirtualWorldContent.h"
 #include <stdio.h>
 #include <cstring>
 #include <iostream>
 
+
 // static constants here
-const GLfloat Object::SCALE = 0.05f;
+const GLfloat Object::SCALE = 0.1f;
 
 Object::Object(const std::string& file_name, Shader* shader)
 	: BaseObject(shader)
@@ -37,7 +40,7 @@ void Object::setUpObject()
 	glGenBuffers(1, &VBO_normals);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO_normals);
 	glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(glm::vec3), &normals.front(), GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(1);// Replace with non-hard-coded value
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -94,13 +97,12 @@ void Object::initState()
 // call: Object::drawState()
 void Object::drawState()
 {
+	scale(initial_scale_factor);
 	// Set uniforms
 	setModelMatrix();
 	setColor();
-
-	// Implement color for object
+	//TODO: Implement color for object
 	glBindVertexArray(VAO);
-	// Perhaps switch to EBO?
 	glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 	glBindVertexArray(0);
 }
@@ -215,4 +217,130 @@ bool Object::loadOBJ(
 	}
 
 	return true;
+}
+
+
+
+PolarBear::PolarBear(Shader* shader, const glm::vec3& m)
+	: Object("res/objects/polarbear.obj", shader)
+{
+	move = m;
+	initial_scale_factor = SCALE_POLAR_BEAR;
+}
+
+
+PolarBear::~PolarBear()
+{
+}
+
+void PolarBear::modState()
+{
+	translate(move);
+	if (move.x <= 0.0f)
+	{
+		color = glm::vec3(1.0f, 0.0f, 0.0f);
+	}
+	else
+	{
+		color = glm::vec3(0.0f, 0.0f, 1.0f);
+	}
+}
+
+Eskimo::Eskimo(Shader* shader, const glm::vec3& m)
+	: Object("res/objects/nana.obj", shader)
+{
+	initial_scale_factor = SCALE_ESKIMO;
+	move = m;
+}
+
+Eskimo::~Eskimo()
+{
+}
+
+void Eskimo::modState()
+{
+	translate(move);
+	if (move.x <= 0.0f)
+	{
+		color = glm::vec3(1.0f, 0.0f, 0.0f);
+	}
+	else
+	{
+		color = glm::vec3(0.0f, 0.0f, 1.0f);
+	}
+}
+
+Penguin::Penguin(Shader* shader, const glm::vec3& m)
+	: Object("res/objects/penguin.obj", shader)
+{
+	initial_scale_factor = SCALE_PENGUIN;
+	move = m;
+}
+
+
+Penguin::~Penguin()
+{
+}
+
+void Penguin::modState()
+{
+	translate(move);
+	if (move.x <= 0.0f)
+	{
+		color = glm::vec3(1.0f, 0.0f, 0.0f);
+	}
+	else
+	{
+		color = glm::vec3(0.0f, 0.0f, 1.0f);
+	}
+}
+
+Igloo::Igloo(Shader* shader, const glm::vec3& m)
+	: Object("res/objects/igloo_mod.obj", shader)
+{
+	initial_scale_factor = SCALE_IGLOO;
+	move = m;
+}
+
+
+Igloo::~Igloo()
+{
+}
+
+void Igloo::modState()
+{
+	translate(move);
+	if (move.x <= 0.0f)
+	{
+		color = glm::vec3(1.0f, 0.0f, 0.0f);
+	}
+	else
+	{
+		color = glm::vec3(0.0f, 0.0f, 1.0f);
+	}
+}
+
+Cube::Cube(Shader* shader, const glm::vec3& m)
+	: Object("res/objects/pacman.obj", shader)
+{
+	initial_scale_factor = SCALE_CUBE;
+	move = m;
+}
+
+
+Cube::~Cube()
+{
+}
+
+void Cube::modState()
+{
+	translate(move);
+	if (move.x <= 0.0f)
+	{
+		color = glm::vec3(1.0f, 0.0f, 0.0f);
+	}
+	else
+	{
+		color = glm::vec3(0.0f, 0.0f, 1.0f);
+	}
 }

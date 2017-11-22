@@ -1,5 +1,6 @@
-#include "ObjectContainer.h"
+#include "stdafx.h"
 
+#include "ObjectContainer.h"
 
 
 ObjectContainer::ObjectContainer()

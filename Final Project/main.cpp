@@ -1,9 +1,10 @@
+#include "stdafx.h"
+
 #include "Shader.h" // Includes all of the important libraries for OpenGL and GLM (including GLFW and GLEW)
 #include <iostream>
 #include <vector>
 #include <string>
 #include "ObjectContainer.h"
-#include "Cube.h"
 #include <cstdlib> // for rand() and srand() -> testing object generation
 #include <ctime> // for time() -> testing object generation
 using namespace std;
@@ -63,8 +64,12 @@ int main()
 	mainShader.useProgram();
 
 	ObjectContainer obj_container;
-	obj_container.addObject(new Cube(&mainShader, glm::vec3(5.0f, 0.0f, 0.0f)));
-	obj_container.addObject(new Cube(&mainShader, glm::vec3(-5.0f, 0.0f, 0.0f)));
+	/*
+	obj_container.addObject(new Penguin(&mainShader, glm::vec3(5.0f, 0.0f, 0.0f)));
+	obj_container.addObject(new Igloo(&mainShader, glm::vec3(-5.0f, 0.0f, 0.0f)));
+	obj_container.addObject(new PolarBear(&mainShader, glm::vec3(-5.0f, 5.0f, 0.0f)));
+	obj_container.addObject(new Eskimo(&mainShader, glm::vec3(5.0f, 5.0f, 0.0f)));*/
+
 
 	projection_matrix = glm::perspective(glm::radians(45.0f), (GLfloat)screen_width / (GLfloat)screen_height, 0.1f, 100.0f);
 
@@ -93,7 +98,16 @@ int main()
 		{
 			GLfloat x = static_cast<float>(min + (max - min + 1) * rand() * fraction);
 			GLfloat y = static_cast<float>(min + (max - min + 1) * rand() * fraction);
-			obj_container.addObject(new Cube(&mainShader, glm::vec3(x, y, 0.0f)));
+			obj_container.addObject(new Penguin(&mainShader, glm::vec3(x, y, 0.0f)));
+			GLfloat x2 = static_cast<float>(min + (max - min + 1) * rand() * fraction);
+			GLfloat y2 = static_cast<float>(min + (max - min + 1) * rand() * fraction);
+			obj_container.addObject(new Igloo(&mainShader, glm::vec3(x2, y2, 0.0f)));
+			GLfloat x3 = static_cast<float>(min + (max - min + 1) * rand() * fraction);
+			GLfloat y3 = static_cast<float>(min + (max - min + 1) * rand() * fraction);
+			obj_container.addObject(new PolarBear(&mainShader, glm::vec3(x3, y3, 0.0f)));
+			GLfloat x4 = static_cast<float>(min + (max - min + 1) * rand() * fraction);
+			GLfloat y4 = static_cast<float>(min + (max - min + 1) * rand() * fraction);
+			obj_container.addObject(new Eskimo(&mainShader, glm::vec3(x4, y4, 0.0f)));
 			init_time = glfwGetTime();
 		}
 		
