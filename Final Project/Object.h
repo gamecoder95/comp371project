@@ -1,15 +1,15 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
-#include "Shader.h"
+#include "BaseObject.h"
 #include <vector>
 
-class Object
+class Object : public BaseObject
 {
 protected:
 	glm::mat4 model_matrix;
 	glm::vec3 color; // To be modified when we implement light
-
+	static const GLfloat SCALE;
 
 	GLuint VAO;
 	GLuint VBO_vertices;
@@ -20,8 +20,6 @@ protected:
 	std::vector<glm::vec3> normals;
 	std::vector<glm::vec2> UVs;
 
-	Shader* shader;
-
 	bool loadOBJ(
 		const char* path,
 		std::vector<glm::vec3>& out_vertices,
@@ -30,17 +28,23 @@ protected:
 	);
 
 	void setUpObject();
-	// THIS MUST BE CALLED AS THE LAST LINE OF UPDATE!
-	virtual void setUniformsAndDraw();
+	
 	void setModelMatrix();
 	void setColor(); // To be modified when we implement light
 
+	// The states of update
+	virtual void initState();
+	virtual void modState() = 0; // This is the real meat of the updating
+	virtual void drawState();
+
 public:
+
+	
 
 	Object(const std::string& file_name, Shader* shader);
 	virtual ~Object();
 
-	virtual void update() = 0;
+	virtual void update();
 
 	void scale(const glm::vec3& scale);
 	void scale(GLfloat scale);

@@ -3,14 +3,17 @@
 #include <cstring>
 #include <iostream>
 
+// static constants here
+const GLfloat Object::SCALE = 0.05f;
+
 Object::Object(const std::string& file_name, Shader* shader)
+	: BaseObject(shader)
 {
 	// Improve error-handling here
 	if (loadOBJ(file_name.c_str(), vertices, normals, UVs))
 	{
 		setUpObject();
 	}
-	this->shader = shader;
 	model_matrix = glm::mat4(1.0f);
 }
 
@@ -38,20 +41,6 @@ void Object::setUpObject()
 	glEnableVertexAttribArray(1);// Replace with non-hard-coded value
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-}
-
-// TO BE CALLED AS THE LAST LINE OF THE UPDATE FUNCTION
-void Object::setUniformsAndDraw()
-{
-	// Set uniforms
-	setModelMatrix();
-	setColor();
-
-	// Implement color for object
-	glBindVertexArray(VAO);
-	// Perhaps switch to EBO?
-	glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 	glBindVertexArray(0);
 }
 
@@ -91,6 +80,37 @@ void Object::setModelMatrix()
 void Object::setColor()
 {
 	shader->setVec3("our_color", color);
+}
+
+// When overriding this, put Object::initState(); at the top
+void Object::initState()
+{
+	model_matrix = glm::mat4(1.0f);
+	scale(SCALE);
+	// color = glm::vec3(0.0f);
+}
+
+// If you need to execute this specific code when you override this function,
+// call: Object::drawState()
+void Object::drawState()
+{
+	// Set uniforms
+	setModelMatrix();
+	setColor();
+
+	// Implement color for object
+	glBindVertexArray(VAO);
+	// Perhaps switch to EBO?
+	glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+	glBindVertexArray(0);
+}
+
+// Not meant to be overriden
+void Object::update()
+{
+	initState();
+	modState();
+	drawState();
 }
 
 bool Object::loadOBJ(
