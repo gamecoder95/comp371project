@@ -82,7 +82,9 @@ void Object::setModelMatrix()
 
 void Object::setColor()
 {
-	shader->setVec3("our_color", color);
+	shader->setVec3("our_color.ambient", color.ambient);
+	shader->setVec3("our_color.diffuse", color.diffuse);
+	shader->setVec3("our_color.specular", color.specular);
 }
 
 // When overriding this, put Object::initState(); at the top

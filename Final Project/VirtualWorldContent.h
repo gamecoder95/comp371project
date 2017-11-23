@@ -1,14 +1,15 @@
 #ifndef VIRTUALWORLDCONTENT_H
 #define VIRTUALWORLDCONTENT_H
 
-#include "BaseObject.h"
+#include "Light.h"
+#include "Shader.h"
 #include <vector>
 
 class Object : public BaseObject
 {
 protected:
 	glm::mat4 model_matrix;
-	glm::vec3 color; // To be modified when we implement light
+	Color color;
 	static const GLfloat SCALE;
 	float initial_scale_factor;
 
@@ -31,7 +32,7 @@ protected:
 	void setUpObject();
 
 	void setModelMatrix();
-	void setColor(); // To be modified when we implement light
+	void setColor();
 
 					 // The states of update
 	virtual void initState();

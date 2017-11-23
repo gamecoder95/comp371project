@@ -1,12 +1,14 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#include <../glew/glew.h>
-#include <../glfw/glfw3.h>
-#include <glm.hpp>
-#include <gtc/matrix_transform.hpp>
-#include <gtc/type_ptr.hpp>
+//#include <../glew/glew.h>
+//#include <../glfw/glfw3.h>
+//#include <glm.hpp>
+//#include <gtc/matrix_transform.hpp>
+//#include <gtc/type_ptr.hpp>
+
 #include <string>
+#include "stdafx.h"
 
 class Shader
 {
