@@ -33,20 +33,24 @@ struct Color
 	}
 };
 
-class Light : public BaseObject
+class DirectionalLight : public BaseObject
 {
 private: 
+	glm::vec3 direction;
 	glm::vec3 position;
 	Color color;
+
 public:
-	Light(Shader* shader, const glm::vec3& pos = glm::vec3(0.0f), const Color& col = Color());
+	DirectionalLight(Shader* shader, const glm::vec3& pos = glm::vec3(0.0f), const glm::vec3& dir = glm::vec3(-1.0f), const Color& col = Color());
 	void setColor(const Color& col);
 	void setPosition(const glm::vec3& pos); // Change position to have transformations possible?
+	void setDirection(const glm::vec3& dir);
 
 	Color getColor() const;
 	glm::vec3 getPosition() const;
+	glm::vec3 getDirection() const;
 	
-	~Light();
+	~DirectionalLight();
 };
 
 #endif;

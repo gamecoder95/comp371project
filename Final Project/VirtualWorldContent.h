@@ -1,7 +1,7 @@
 #ifndef VIRTUALWORLDCONTENT_H
 #define VIRTUALWORLDCONTENT_H
 
-#include "Light.h"
+#include "DirectionalLight.h"
 #include "Shader.h"
 #include <vector>
 
@@ -96,19 +96,6 @@ public:
 	Igloo(Shader* shader, const glm::vec3& m);
 	~Igloo();
 	void modState();
-};
-
-//TODO: delete this class (not useful anymore)
-class Cube : public Object
-{
-private:
-	const float SCALE_CUBE = 0.1f;
-	glm::vec3 move;
-public:
-	Cube(Shader* shader, const glm::vec3& m);
-	~Cube();
-	void modState();
-
 };
 
 #endif

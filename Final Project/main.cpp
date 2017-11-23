@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 #include "ObjectContainer.h"
-#include "Light.h"
+#include "DirectionalLight.h"
 #include <cstdlib> // for rand() and srand() -> testing object generation
 #include <ctime> // for time() -> testing object generation
 using namespace std;
@@ -78,8 +78,8 @@ int main()
 
 	projection_matrix = glm::perspective(glm::radians(45.0f), (GLfloat)screen_width / (GLfloat)screen_height, 0.1f, 100.0f);
 
-	// Light
-	Light light(&mainShader, glm::vec3(0.0f), arctic_midnight);
+	// DirectionalLight (test)
+	DirectionalLight light(&mainShader, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f), arctic_midnight);
 
 	// TEST
 	float init_time = static_cast<float>(glfwGetTime());
@@ -98,7 +98,7 @@ int main()
 		//view_matrix = glm::translate(view_matrix, glm::vec3(0.0f, 0.0f, 1000.0f));
 		mainShader.setMat4("view_matrix", view_matrix);
 		mainShader.setMat4("projection_matrix", projection_matrix);
-		// Light color test
+		// DirectionalLight color test
 		//mainShader.setVec3("light_color", glm::vec3(0.54f, 1.0f, 0.47f));
 		mainShader.setVec3("view_pos", glm::vec3(0.0f));
 
