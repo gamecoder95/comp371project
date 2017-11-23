@@ -5,6 +5,8 @@
 #include <vector>
 #include <string>
 #include "ObjectContainer.h"
+#include "Cube.h"
+#include "Person.h"
 #include <cstdlib> // for rand() and srand() -> testing object generation
 #include <ctime> // for time() -> testing object generation
 using namespace std;
@@ -19,6 +21,47 @@ const glm::vec3 center(0.0f, 0.0f, 0.0f);
 const glm::vec3 up(0.0f, 1.0f, 0.0f);
 const glm::vec3 eye(0.0f, 0.0f, 3.0f);
 
+//camera
+Person* camera;
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	if (key == GLFW_KEY_W && action == GLFW_PRESS){
+		camera->moveFront();
+	}
+
+	if (key == GLFW_KEY_S && action == GLFW_PRESS){
+		camera->moveBack();
+	}
+
+	if (key == GLFW_KEY_A && action == GLFW_PRESS){
+		camera->moveLeft();
+	}
+
+	if (key == GLFW_KEY_D && action == GLFW_PRESS){
+		camera->moveRight();
+	}
+		
+}
+
+static void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+	if (camera->isMovable()){
+		int width, height;
+		glfwGetFramebufferSize(window, &width, &height);
+
+		//gets the amount to rotate the camera
+		double xdiff = xpos - (width / 2);
+		double ydiff = ypos - (height / 2);
+
+		//updates the camera direction
+		camera->changeDirection(xdiff, ydiff);
+
+		//resets the mouse location
+		glfwSetCursorPos(window, width / 2, height / 2);
+	}
+}
+
 int main()
 {
 	glfwInit();
@@ -29,8 +72,8 @@ int main()
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
 	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Arctic Adventure", nullptr, nullptr);
-	//glfwSetKeyCallback(window, key_callback);
-	//glfwSetCursorPosCallback(window, mouse_callback);
+	glfwSetKeyCallback(window, key_callback);
+	glfwSetCursorPosCallback(window, mouse_callback);
 	//glfwSetMouseButtonCallback(window, mouse_button_callback);
 	//glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	
@@ -64,15 +107,15 @@ int main()
 	mainShader.useProgram();
 
 	ObjectContainer obj_container;
-	/*
-	obj_container.addObject(new Penguin(&mainShader, glm::vec3(5.0f, 0.0f, 0.0f)));
-	obj_container.addObject(new Igloo(&mainShader, glm::vec3(-5.0f, 0.0f, 0.0f)));
-	obj_container.addObject(new PolarBear(&mainShader, glm::vec3(-5.0f, 5.0f, 0.0f)));
-	obj_container.addObject(new Eskimo(&mainShader, glm::vec3(5.0f, 5.0f, 0.0f)));*/
-
+	obj_container.addObject(new Cube(&mainShader, glm::vec3(5.0f, 0.0f, 0.0f)));
+	obj_container.addObject(new Cube(&mainShader, glm::vec3(-5.0f, 0.0f, 0.0f)));
 
 	projection_matrix = glm::perspective(glm::radians(45.0f), (GLfloat)screen_width / (GLfloat)screen_height, 0.1f, 100.0f);
 
+	//Camera
+	camera = new Person(&mainShader);
+
+	obj_container.addObject(camera);
 	// TEST
 	float init_time = static_cast<float>(glfwGetTime());
 	srand(static_cast<unsigned int>(time(0)));
@@ -98,16 +141,7 @@ int main()
 		{
 			GLfloat x = static_cast<float>(min + (max - min + 1) * rand() * fraction);
 			GLfloat y = static_cast<float>(min + (max - min + 1) * rand() * fraction);
-			obj_container.addObject(new Penguin(&mainShader, glm::vec3(x, y, 0.0f)));
-			GLfloat x2 = static_cast<float>(min + (max - min + 1) * rand() * fraction);
-			GLfloat y2 = static_cast<float>(min + (max - min + 1) * rand() * fraction);
-			obj_container.addObject(new Igloo(&mainShader, glm::vec3(x2, y2, 0.0f)));
-			GLfloat x3 = static_cast<float>(min + (max - min + 1) * rand() * fraction);
-			GLfloat y3 = static_cast<float>(min + (max - min + 1) * rand() * fraction);
-			obj_container.addObject(new PolarBear(&mainShader, glm::vec3(x3, y3, 0.0f)));
-			GLfloat x4 = static_cast<float>(min + (max - min + 1) * rand() * fraction);
-			GLfloat y4 = static_cast<float>(min + (max - min + 1) * rand() * fraction);
-			obj_container.addObject(new Eskimo(&mainShader, glm::vec3(x4, y4, 0.0f)));
+			obj_container.addObject(new Cube(&mainShader, glm::vec3(x, y, 0.0f)));
 			init_time = glfwGetTime();
 		}
 		
