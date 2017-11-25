@@ -45,6 +45,9 @@ void Object::setUpObject()
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+
+	// Collision box
+	setCollisionBox();
 }
 
 void Object::destroy()
@@ -82,7 +85,54 @@ void Object::setModelMatrix()
 
 void Object::setColor()
 {
-	shader->setVec3("our_color", color);
+	shader->setVec3("our_color.ambient", color.ambient);
+	shader->setVec3("our_color.diffuse", color.diffuse);
+	shader->setVec3("our_color.specular", color.specular);
+}
+
+void Object::setCollisionBox()
+{
+	glm::vec3 min = vertices[0];
+	glm::vec3 max = vertices[0];
+
+	for (int i = 1; i < vertices.size(); ++i)
+	{
+		// Min values
+		if (min.x > vertices[0].x)
+		{
+			min.x = vertices[0].x;
+		}
+		if (min.z > vertices[0].z)
+		{
+			min.z = vertices[0].z;
+		}
+		if (min.y > vertices[0].y)
+		{
+			min.y = vertices[0].y;
+		}
+
+		// Max values
+		if (max.x < vertices[0].x)
+		{
+			max.x = vertices[0].x;
+		}
+		if (max.z < vertices[0].z)
+		{
+			max.z = vertices[0].z;
+		}
+		if (max.y < vertices[0].y)
+		{
+			max.y = vertices[0].y;
+		}
+	}
+	collisionBox.back  = min.z;
+	collisionBox.front = max.z;
+
+	collisionBox.left  = min.x;
+	collisionBox.right = max.x;
+
+	collisionBox.bottom = min.y;
+	collisionBox.top    = max.y;
 }
 
 // When overriding this, put Object::initState(); at the top
@@ -110,9 +160,9 @@ void Object::drawState()
 // Not meant to be overriden
 void Object::update()
 {
-	initState();
 	modState();
 	drawState();
+	initState();
 }
 
 bool Object::loadOBJ(
@@ -224,7 +274,7 @@ bool Object::loadOBJ(
 PolarBear::PolarBear(Shader* shader, const glm::vec3& m)
 	: Object("res/objects/polarbear.obj", shader)
 {
-	move = m;
+	position = m;
 	initial_scale_factor = SCALE_POLAR_BEAR;
 }
 
@@ -235,8 +285,8 @@ PolarBear::~PolarBear()
 
 void PolarBear::modState()
 {
-	translate(move);
-	if (move.x <= 0.0f)
+	translate(position);
+	if (position.x <= 0.0f)
 	{
 		color = glm::vec3(1.0f, 0.0f, 0.0f);
 	}
@@ -250,7 +300,7 @@ Eskimo::Eskimo(Shader* shader, const glm::vec3& m)
 	: Object("res/objects/nana.obj", shader)
 {
 	initial_scale_factor = SCALE_ESKIMO;
-	move = m;
+	position = m;
 }
 
 Eskimo::~Eskimo()
@@ -259,8 +309,8 @@ Eskimo::~Eskimo()
 
 void Eskimo::modState()
 {
-	translate(move);
-	if (move.x <= 0.0f)
+	translate(position);
+	if (position.x <= 0.0f)
 	{
 		color = glm::vec3(1.0f, 0.0f, 0.0f);
 	}
@@ -308,31 +358,6 @@ Igloo::~Igloo()
 }
 
 void Igloo::modState()
-{
-	translate(move);
-	if (move.x <= 0.0f)
-	{
-		color = glm::vec3(1.0f, 0.0f, 0.0f);
-	}
-	else
-	{
-		color = glm::vec3(0.0f, 0.0f, 1.0f);
-	}
-}
-
-Cube::Cube(Shader* shader, const glm::vec3& m)
-	: Object("res/objects/pacman.obj", shader)
-{
-	initial_scale_factor = SCALE_CUBE;
-	move = m;
-}
-
-
-Cube::~Cube()
-{
-}
-
-void Cube::modState()
 {
 	translate(move);
 	if (move.x <= 0.0f)

@@ -1,14 +1,15 @@
 #ifndef VIRTUALWORLDCONTENT_H
 #define VIRTUALWORLDCONTENT_H
 
-#include "BaseObject.h"
+#include "DirectionalLight.h"
+#include "Shader.h"
 #include <vector>
 
 class Object : public BaseObject
 {
 protected:
 	glm::mat4 model_matrix;
-	glm::vec3 color; // To be modified when we implement light
+	Color color;
 	static const GLfloat SCALE;
 	float initial_scale_factor;
 
@@ -31,12 +32,14 @@ protected:
 	void setUpObject();
 
 	void setModelMatrix();
-	void setColor(); // To be modified when we implement light
+	void setColor();
 
 					 // The states of update
 	virtual void initState();
 	virtual void modState() = 0; // This is the real meat of the updating
 	virtual void drawState();
+
+	void setCollisionBox();
 
 public:
 
@@ -95,19 +98,6 @@ public:
 	Igloo(Shader* shader, const glm::vec3& m);
 	~Igloo();
 	void modState();
-};
-
-//TODO: delete this class (not useful anymore)
-class Cube : public Object
-{
-private:
-	const float SCALE_CUBE = 0.1f;
-	glm::vec3 move;
-public:
-	Cube(Shader* shader, const glm::vec3& m);
-	~Cube();
-	void modState();
-
 };
 
 #endif

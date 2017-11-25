@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include "ObjectContainer.h"
+#include "DirectionalLight.h"
 #include <cstdlib> // for rand() and srand() -> testing object generation
 #include <ctime> // for time() -> testing object generation
 using namespace std;
@@ -18,6 +19,10 @@ glm::mat4 projection_matrix;
 const glm::vec3 center(0.0f, 0.0f, 0.0f);
 const glm::vec3 up(0.0f, 1.0f, 0.0f);
 const glm::vec3 eye(0.0f, 0.0f, 3.0f);
+
+// TEST: sun and moon colors
+const Color arctic_midnight(glm::vec3(0.1f), glm::vec3(0.4f, 0.4f, 0.99f)/*glm::vec3(0.39f, 0.145f, 0.13f)*/);
+const Color green_northern_light(glm::vec3(0.1f), glm::vec3(0.294f, 0.933f, 0.561f));
 
 int main()
 {
@@ -73,6 +78,9 @@ int main()
 
 	projection_matrix = glm::perspective(glm::radians(45.0f), (GLfloat)screen_width / (GLfloat)screen_height, 0.1f, 100.0f);
 
+	// DirectionalLight (test)
+	DirectionalLight light(&mainShader, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f), arctic_midnight);
+
 	// TEST
 	float init_time = static_cast<float>(glfwGetTime());
 	srand(static_cast<unsigned int>(time(0)));
@@ -90,6 +98,9 @@ int main()
 		//view_matrix = glm::translate(view_matrix, glm::vec3(0.0f, 0.0f, 1000.0f));
 		mainShader.setMat4("view_matrix", view_matrix);
 		mainShader.setMat4("projection_matrix", projection_matrix);
+		// DirectionalLight color test
+		//mainShader.setVec3("light_color", glm::vec3(0.54f, 1.0f, 0.47f));
+		mainShader.setVec3("view_pos", glm::vec3(0.0f));
 
 		// Draw and manipulate stuff here
 
@@ -109,6 +120,7 @@ int main()
 			GLfloat y4 = static_cast<float>(min + (max - min + 1) * rand() * fraction);
 			obj_container.addObject(new Eskimo(&mainShader, glm::vec3(x4, y4, 0.0f)));
 			init_time = glfwGetTime();
+			light.setColor((light.getColor().diffuse == arctic_midnight.diffuse) ? green_northern_light : arctic_midnight);
 		}
 		
 		obj_container.updateAll();
