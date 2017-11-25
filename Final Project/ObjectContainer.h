@@ -10,6 +10,8 @@ class ObjectContainer
 private:
 	std::vector<Object*> object_container;
 
+	void testAllCollisions(int index);
+
 public:
 	ObjectContainer();
 	~ObjectContainer();

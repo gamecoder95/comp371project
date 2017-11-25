@@ -27,12 +27,13 @@ public:
 	GLuint getProgramID() const;
 
 	// Utility uniform functions
+	GLuint getUniformLoc(const std::string& name) const;
 	void setVec3(const std::string& name, const glm::vec3& value) const;
 	void setMat4(const std::string& name, const glm::mat4& value) const;
 	// put other uniform variable stuff here
 
 	// Utility attribute functions
-	GLuint getLocAttrib(const std::string& name) const;
+	GLuint getAttribLoc(const std::string& name) const;
 };
 
 #endif // !SHADER_H

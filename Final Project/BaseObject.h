@@ -20,8 +20,8 @@ protected:
 	BoundingBox collisionBox;
 	glm::vec3 position;
 
-	virtual void setCollisionBox() = 0;
-	
+	// Meant to be overriden by those that need it!
+	virtual void setCollisionBox();
 
 public:
 	BaseObject(Shader* shader);
@@ -34,7 +34,8 @@ public:
 	virtual float getTop() const;
 	virtual float getBottom() const;
 	virtual bool isCollision(const BaseObject& other);
-
+	// Meant to be overriden by those that need it!
+	virtual void onCollision(BaseObject& other);
 };
 
 #endif

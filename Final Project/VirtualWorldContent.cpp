@@ -34,14 +34,14 @@ void Object::setUpObject()
 	glGenBuffers(1, &VBO_vertices);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO_vertices);
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), &vertices.front(), GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
-	glEnableVertexAttribArray(0);// Replace with non-hard-coded value
+	glVertexAttribPointer(shader->getAttribLoc("position"), 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+	glEnableVertexAttribArray(shader->getAttribLoc("position"));// Replace with non-hard-coded value
 
 	glGenBuffers(1, &VBO_normals);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO_normals);
 	glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(glm::vec3), &normals.front(), GL_STATIC_DRAW);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
-	glEnableVertexAttribArray(1);// Replace with non-hard-coded value
+	glVertexAttribPointer(shader->getAttribLoc("in_normal"), 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+	glEnableVertexAttribArray(shader->getAttribLoc("in_normal"));// Replace with non-hard-coded value
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
@@ -58,6 +58,11 @@ void Object::destroy()
 	VAO = VBO_vertices = VBO_normals = 0;
 }
 
+bool Object::isDestroyed()
+{
+	return VAO == 0;
+}
+
 void Object::translate(const glm::vec3& translate_vect)
 {
 	model_matrix = glm::translate(model_matrix, translate_vect);
@@ -65,7 +70,7 @@ void Object::translate(const glm::vec3& translate_vect)
 
 void Object::rotate(const glm::vec3& rotation_axis, GLfloat angle_deg)
 {
-	model_matrix = glm::rotate(model_matrix, glm::radians(angle_deg), rotation_axis);
+	model_matrix = glm::rotate(model_matrix, glm::radians(angle_deg), glm::normalize(rotation_axis));
 }
 
 void Object::scale(const glm::vec3& scale)
@@ -98,31 +103,31 @@ void Object::setCollisionBox()
 	for (int i = 1; i < vertices.size(); ++i)
 	{
 		// Min values
-		if (min.x > vertices[0].x)
+		if (min.x > vertices[i].x)
 		{
-			min.x = vertices[0].x;
+			min.x = vertices[i].x;
 		}
-		if (min.z > vertices[0].z)
+		if (min.z > vertices[i].z)
 		{
-			min.z = vertices[0].z;
+			min.z = vertices[i].z;
 		}
-		if (min.y > vertices[0].y)
+		if (min.y > vertices[i].y)
 		{
-			min.y = vertices[0].y;
+			min.y = vertices[i].y;
 		}
 
 		// Max values
-		if (max.x < vertices[0].x)
+		if (max.x < vertices[i].x)
 		{
-			max.x = vertices[0].x;
+			max.x = vertices[i].x;
 		}
-		if (max.z < vertices[0].z)
+		if (max.z < vertices[i].z)
 		{
-			max.z = vertices[0].z;
+			max.z = vertices[i].z;
 		}
-		if (max.y < vertices[0].y)
+		if (max.y < vertices[i].y)
 		{
-			max.y = vertices[0].y;
+			max.y = vertices[i].y;
 		}
 	}
 	collisionBox.back  = min.z;
@@ -324,7 +329,7 @@ Penguin::Penguin(Shader* shader, const glm::vec3& m)
 	: Object("res/objects/penguin.obj", shader)
 {
 	initial_scale_factor = SCALE_PENGUIN;
-	move = m;
+	position = m;
 }
 
 
@@ -334,8 +339,8 @@ Penguin::~Penguin()
 
 void Penguin::modState()
 {
-	translate(move);
-	if (move.x <= 0.0f)
+	translate(position);
+	if (position.x <= 0.0f)
 	{
 		color = glm::vec3(1.0f, 0.0f, 0.0f);
 	}
@@ -349,7 +354,7 @@ Igloo::Igloo(Shader* shader, const glm::vec3& m)
 	: Object("res/objects/igloo_mod.obj", shader)
 {
 	initial_scale_factor = SCALE_IGLOO;
-	move = m;
+	position = m;
 }
 
 
@@ -359,8 +364,8 @@ Igloo::~Igloo()
 
 void Igloo::modState()
 {
-	translate(move);
-	if (move.x <= 0.0f)
+	translate(position);
+	if (position.x <= 0.0f)
 	{
 		color = glm::vec3(1.0f, 0.0f, 0.0f);
 	}

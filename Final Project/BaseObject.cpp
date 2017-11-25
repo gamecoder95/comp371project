@@ -43,6 +43,23 @@ float BaseObject::getBottom() const
 	return position.y + collisionBox.bottom;
 }
 
+// Meant to be overriden by those that need it!
+void BaseObject::setCollisionBox()
+{
+	collisionBox.back = 0.0f;
+	collisionBox.front = 0.0f;
+	collisionBox.left = 0.0f;
+	collisionBox.right = 0.0f;
+	collisionBox.top = 0.0f;
+	collisionBox.bottom = 0.0f;
+}
+
+// Meant to be overriden by those that need it!
+void BaseObject::onCollision(BaseObject& other)
+{
+	// Does nothing here, needs definition by those that need it!
+}
+
 bool BaseObject::isCollision(const BaseObject& other)
 {
 	if (other.getBack() > this->getFront()

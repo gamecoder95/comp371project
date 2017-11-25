@@ -23,11 +23,33 @@ Object* ObjectContainer::getObject(int index)
 	return object_container[index];
 }
 
+void ObjectContainer::testAllCollisions(int index)
+{
+	if (index >= 0 && index < object_container.size())
+	{
+		for (int i = 0; i < object_container.size(), i != index; ++i)
+		{
+			if(object_container[index]->isCollision(*object_container[i]))
+			{
+				object_container[index]->onCollision(*object_container[i]);
+			}
+		}
+	}
+}
+
 void ObjectContainer::updateAll()
 {
 	for (int i = 0; i < object_container.size(); ++i)
 	{
-		object_container[i]->update();
+		if (object_container[i]->isDestroyed())
+		{
+			removeObject(i);
+		}
+		else
+		{
+			testAllCollisions(i);
+			object_container[i]->update();
+		}
 	}
 }
 

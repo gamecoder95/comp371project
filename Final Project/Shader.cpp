@@ -106,7 +106,12 @@ void Shader::setMat4(const std::string& name, const glm::mat4& value) const
 	glUniformMatrix4fv(glGetUniformLocation(program_ID, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
 }
 
-GLuint Shader::getLocAttrib(const std::string& name) const
+GLuint Shader::getAttribLoc(const std::string& name) const
 {
 	return glGetAttribLocation(program_ID, name.c_str());
+}
+
+GLuint Shader::getUniformLoc(const std::string& name) const
+{
+	return glGetUniformLocation(program_ID, name.c_str());
 }

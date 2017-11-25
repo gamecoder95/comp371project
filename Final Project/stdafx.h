@@ -9,12 +9,12 @@
 
 #include <stdio.h>
 #include <tchar.h>
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <glm.hpp>
-#include <gtc/matrix_transform.hpp>
-#include <gtc/type_ptr.hpp>
-#include <string>
+//#include <GL/glew.h>
+//#include <GLFW/glfw3.h>
+//#include <glm.hpp>
+//#include <gtc/matrix_transform.hpp>
+//#include <gtc/type_ptr.hpp>
+//#include <string>
 
 
 
