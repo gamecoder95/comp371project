@@ -1,5 +1,7 @@
-#include "ObjectContainer.h"
+#include "stdafx.h"
 
+#include "ObjectContainer.h"
+#include <iostream>
 
 
 ObjectContainer::ObjectContainer()
@@ -12,12 +14,12 @@ ObjectContainer::~ObjectContainer()
 	removeAll();
 }
 
-void ObjectContainer::addObject(Object* new_obj)
+void ObjectContainer::addObject(BaseObject* new_obj)
 {
 	object_container.push_back(new_obj);
 }
 
-Object* ObjectContainer::getObject(int index)
+BaseObject* ObjectContainer::getObject(int index)
 {
 	return object_container[index];
 }

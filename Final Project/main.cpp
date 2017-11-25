@@ -1,18 +1,169 @@
+#include "stdafx.h"
+
 #include "Shader.h" // Includes all of the important libraries for OpenGL and GLM (including GLFW and GLEW)
 #include <iostream>
 #include <vector>
 #include <string>
 #include "ObjectContainer.h"
-#include "Cube.h"
+#include "VirtualWorldContent.h"
+#include "Person.h"
+#include <cstdlib> // for rand() and srand() -> testing object generation
+#include <ctime> // for time() -> testing object generation
 using namespace std;
 
 const GLuint WIDTH = 800;
 const GLuint HEIGHT = 800;
 
+// The projection and view matrices here are just testing things, will remove when we have 
+// the official camera class
 glm::mat4 projection_matrix;
-const glm::vec3 center(0.0f, 0.0f, 0.0f);
-const glm::vec3 up(0.0f, 1.0f, 0.0f);
-const glm::vec3 eye(0.0f, 0.0f, 3.0f);
+
+
+//flags
+bool fullscreen_flag = false;
+bool front_flag = false;
+bool back_flag = false;
+bool right_flag = false;
+bool left_flag = false;
+bool up_flag = false;
+bool down_flag = false;
+
+//camera
+Person* camera;
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS){
+		front_flag = true;
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_RELEASE){
+		front_flag = false;
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
+		back_flag = true;
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_RELEASE){
+		back_flag = false;
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
+		left_flag = true;
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_RELEASE){
+		left_flag = false;
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
+		right_flag = true;
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_RELEASE){
+		right_flag = false;
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS){
+		up_flag = true;
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE){
+		up_flag = false;
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS){
+		down_flag = true;
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE){
+		down_flag = false;
+	}
+
+	if (key == GLFW_KEY_F && action == GLFW_PRESS){
+		camera->toggleFly();
+	}
+
+	if (key == GLFW_KEY_M && action == GLFW_PRESS){
+		camera->toggleMovable();
+	}
+
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS){
+		glfwTerminate();
+		exit(0);
+	}
+
+	if (key == GLFW_KEY_F1 && action == GLFW_PRESS){
+		if (fullscreen_flag){
+			glfwSetWindowSize(window, WIDTH, HEIGHT);
+		}
+		else{
+			int height, width;
+			GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+			const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+			glfwSetWindowSize(window, mode->width, mode->height);
+			
+			glfwSetWindowPos(window, 0, 0);
+
+		}
+
+		fullscreen_flag = !fullscreen_flag;
+	}
+		
+}
+
+//calculates camera movements with key board
+void moveCamera(){
+
+	if (front_flag){
+		camera->moveFront();
+	}
+
+	if (back_flag){
+		camera->moveBack();
+	}
+
+	if (right_flag){
+		camera->moveRight();
+	}
+
+	if (left_flag){
+		camera->moveLeft();
+	}
+
+	if (up_flag){
+		camera->moveUp();
+	}
+
+	if (down_flag){
+		camera->moveDown();
+	}
+}
+
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+	projection_matrix = glm::perspective(glm::radians(45.0f), ((float)width) / ((float)height), 0.1f, 100.0f);
+	glViewport(0, 0, width, height);
+}
+
+static void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+	if (camera->isMovable()){
+		int width, height;
+		glfwGetFramebufferSize(window, &width, &height);
+
+		//gets the amount to rotate the camera
+		double xdiff = xpos - (width / 2);
+		double ydiff = ypos - (height / 2);
+
+		//updates the camera direction
+		camera->changeDirection(xdiff, ydiff);
+
+		//resets the mouse location
+		glfwSetCursorPos(window, width / 2, height / 2);
+	}
+}
 
 int main()
 {
@@ -24,10 +175,10 @@ int main()
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
 	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Arctic Adventure", nullptr, nullptr);
-	//glfwSetKeyCallback(window, key_callback);
-	//glfwSetCursorPosCallback(window, mouse_callback);
+	glfwSetKeyCallback(window, key_callback);
+	glfwSetCursorPosCallback(window, mouse_callback);
 	//glfwSetMouseButtonCallback(window, mouse_button_callback);
-	//glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	
 	int screen_width, screen_height;
 	glfwGetFramebufferSize(window, &screen_width, &screen_height);
@@ -58,12 +209,24 @@ int main()
 	Shader mainShader("res/shaders/vertex.shader", "res/shaders/fragment.shader");
 	mainShader.useProgram();
 
+	//TESTING
 	ObjectContainer obj_container;
-	obj_container.addObject(new Cube(&mainShader, glm::vec3(0.5f, 0.0f, 0.0f)));
-	obj_container.addObject(new Cube(&mainShader, glm::vec3(-0.5f, 0.0f, 0.0f)));
+	obj_container.addObject(new Cube(&mainShader, glm::vec3(5.0f, 0.0f, 0.0f)));
+	obj_container.addObject(new Cube(&mainShader, glm::vec3(-5.0f, 0.0f, 0.0f)));
 
 	projection_matrix = glm::perspective(glm::radians(45.0f), (GLfloat)screen_width / (GLfloat)screen_height, 0.1f, 100.0f);
 
+	//creates terrain TODO implement
+	Terrain terrain(0, 0, 0);
+
+	//Camera
+	camera = new Person(&mainShader, &terrain);
+	obj_container.addObject(camera);
+	// TEST
+	float init_time = static_cast<float>(glfwGetTime());
+	srand(static_cast<unsigned int>(time(0)));
+	int min = -10, max = 10;
+	double fraction = 1.0 / (static_cast<double>(RAND_MAX) + 1.0);
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -72,15 +235,25 @@ int main()
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glm::mat4 view_matrix = glm::lookAt(eye, center, up);
+//		glm::mat4 view_matrix = glm::lookAt(eye, center, up);
 		//view_matrix = glm::translate(view_matrix, glm::vec3(0.0f, 0.0f, 1000.0f));
-		mainShader.setMat4("view_matrix", view_matrix);
+	//	mainShader.setMat4("view_matrix", view_matrix);
 		mainShader.setMat4("projection_matrix", projection_matrix);
 
 		// Draw and manipulate stuff here
 
+		// TEST STUFF!
+		if (static_cast<float>(glfwGetTime()) - init_time >= 5.0f)
+		{
+			GLfloat x = static_cast<float>(min + (max - min + 1) * rand() * fraction);
+			GLfloat y = static_cast<float>(min + (max - min + 1) * rand() * fraction);
+			obj_container.addObject(new Cube(&mainShader, glm::vec3(x, y, 0.0f)));
+			init_time = glfwGetTime();
+		}
+		
+		moveCamera(); //updates camera
 		obj_container.updateAll();
-		//obj_container.drawAll();
+
 		// End draw and manipulate stuff here
 
 		glfwSwapBuffers(window);

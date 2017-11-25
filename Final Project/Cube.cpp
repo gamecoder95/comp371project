@@ -1,10 +1,11 @@
-#include "Cube.h"
+#include "stdafx.h"
 
+#include "Cube.h"
+/*
 Cube::Cube(Shader* shader, const glm::vec3& m)
-	: Object("res/models/pacman.obj", shader)
+	: Object("res/objects/pacman.obj", shader)
 {
 	move = m;
-	translate(move);
 }
 
 
@@ -12,8 +13,9 @@ Cube::~Cube()
 {
 }
 
-void Cube::update()
+void Cube::modState()
 {
+	translate(move);
 	if (move.x <= 0.0f)
 	{
 		color = glm::vec3(1.0f, 0.0f, 0.0f);
@@ -22,5 +24,4 @@ void Cube::update()
 	{
 		color = glm::vec3(0.0f, 0.0f, 1.0f);
 	}
-	setUniformsAndDraw();
-}
+}*/

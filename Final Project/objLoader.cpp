@@ -1,9 +1,10 @@
+#include "stdafx.h"
+
 #include <stdio.h>
 #include <cstring>
 #include <iostream>
 
 #include "objLoader.h"
-
 
 bool loadOBJ(
 	const char* path,
