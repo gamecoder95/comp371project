@@ -12,8 +12,8 @@ protected:
 public:
 	BaseObject(Shader* shader);
 	~BaseObject();
-	virtual void update();
-	virtual void destroy();
+	virtual void update() = 0;
+	virtual void destroy() = 0;
 };
 
 #endif

@@ -1,12 +1,15 @@
 #include "stdafx.h"
 #include "Person.h"
+#include <iostream>
+#include <string>
 
 
 //--------------- Constructor / Destructor --------------------------------
 
-Person::Person(Shader* sh) : BaseObject(sh)
+Person::Person(Shader* sh, Terrain* terrain) : BaseObject(sh)
 {
 	view_matrix = glm::lookAt(view_pos, view_pos + view_dir, glm::vec3(0.0f, 1.0f, 0.0f));
+	land = terrain;
 }
 
 
@@ -28,26 +31,20 @@ bool Person::isMovable()
 	return move_flag;
 }
 
+// ----------------- Fly Flag --------------------------------------------
+
+void Person::toggleFly(){
+	fly_flag = !fly_flag;
+}
+
+bool Person::isFly(){
+	return fly_flag;
+}
+
 //---------------- Direction changing function ---------------------------
 
 void Person::changeDirection(double xdiff, double ydiff)
 {
-	/* This logic must be added to the mousePositionCallback function (this snippet assumes the Person variable is named camera)
-	if(camera.isMovable()){
-		int width, height;
-		glfwGetFramebufferSize(window, &width, &height);
-
-		//gets the amount to rotate the camera
-		double xdiff = xpos - (width / 2);
-		double ydiff = ypos - (height / 2);
-
-		//updates the camera direction
-		camera.changeDirection(xdiff, ydiff)
-
-		//resets the mouse location
-		glfwSetCursorPos(window, width / 2, height / 2);
-	}
-	*/
 
 	//makes sure he user is pressing a button to move look around
 	if (move_flag){
@@ -66,7 +63,15 @@ void Person::changeDirection(double xdiff, double ydiff)
 void Person::moveFront()
 {
 	if (move_flag){
-		view_pos += view_dir * MOVE;
+		if (fly_flag){
+			float oldz = view_pos[1];
+			view_pos += view_dir * MOVE;
+			view_pos[1] = oldz;
+		}
+		else{
+			view_pos += view_dir * MOVE;
+			view_pos[1] = calcY();
+		}
 	}
 }
 
@@ -74,7 +79,15 @@ void Person::moveFront()
 void Person::moveBack()
 {
 	if (move_flag){
-		view_pos -= view_dir * MOVE;
+		if (fly_flag){
+			float oldz = view_pos[1];
+			view_pos -= view_dir * MOVE;
+			view_pos[1] = oldz;
+		}
+		else{
+			view_pos -= view_dir * MOVE;
+			view_pos[1] = calcY();
+		}
 	}
 }
 
@@ -82,7 +95,8 @@ void Person::moveBack()
 void Person::moveRight()
 {
 	if (move_flag){
-		view_pos += glm::cross(view_dir, glm::vec3(0, 1, 0)) * MOVE;
+		view_pos += glm::cross(view_dir, glm::vec3(0.0f, 1.0f, 0.0f)) * MOVE;
+		view_pos[1] = calcY();
 	}
 }
 
@@ -90,8 +104,31 @@ void Person::moveRight()
 void Person::moveLeft()
 {
 	if (move_flag){
-		view_pos -= glm::cross(view_dir, glm::vec3(0, 1, 0)) * MOVE;
+		view_pos -= glm::cross(view_dir, glm::vec3(0.0f, 1.0f, 0.0f)) * MOVE;
+		view_pos[1] = calcY();
 	}
+}
+
+void Person::moveUp(){
+	if (move_flag && fly_flag){
+		view_pos += glm::vec3(0.0f, 1.0f, 0.0f) * MOVE;
+	}
+}
+
+void Person::moveDown(){
+	if (move_flag && fly_flag){
+		view_pos -= glm::vec3(0.0f, 1.0f, 0.0f) * MOVE;
+	}
+}
+
+//calcualtes the y position of the camera based on terrain if isFly is false or returns the current value if
+//isFly is true
+float Person::calcY(){
+	if (fly_flag){
+		return view_pos[1];
+	}
+
+	return land->getHeight(view_pos[0], view_pos[2]);
 }
 
 

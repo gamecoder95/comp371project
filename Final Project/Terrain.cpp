@@ -13,17 +13,23 @@ Terrain::Terrain(int ox, int oz, float s)
 	srand(seed);
 	for (int x = 0; x <10; x++)
 	{
-		for (int z = 0; z <= 11; z++)
+
+		grid.push_back(vector<glm::vec3>());
+		for (int z = 0; z < 10; z++)
 		{
 			glm::vec3 coordinate(x+offsetX, 0, z+offsetZ);
-			grid[x][z] = coordinate;
+			grid[x].push_back(coordinate);
 		}
 	}
-	for (int i = 0; i < grid.size; i++)
+	for (int i = 0; i < grid.size(); i++)
 	{
-		for (int j = 0; j < grid[i].size; j++)
+		for (int j = 0; j < grid[i].size(); j++)
 		{
 			grid[i][j].y = (rand()%13) - 6;
 		}
 	}
+}
+
+float Terrain::getHeight(int x, int z){
+	return 0; //TODO implement
 }

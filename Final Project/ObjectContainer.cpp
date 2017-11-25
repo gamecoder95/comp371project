@@ -1,7 +1,7 @@
 #include "stdafx.h"
 
 #include "ObjectContainer.h"
-
+#include <iostream>
 
 
 ObjectContainer::ObjectContainer()

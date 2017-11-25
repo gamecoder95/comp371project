@@ -12,4 +12,7 @@ BaseObject::BaseObject(Shader* shader)
 
 BaseObject::~BaseObject()
 {
+
 }
+
+

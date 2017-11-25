@@ -13,7 +13,7 @@ public:
 	Terrain();
 	Terrain(int ox, int oz, float s);
 	vector<glm::vec3> getRow(int col);
-	glm::vec3 getHeight(int x, int z);
+	float getHeight(int x, int z);
 
 	
 };
