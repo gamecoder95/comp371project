@@ -28,6 +28,16 @@ void DirectionalLight::setDirection(const glm::vec3& dir)
 	shader->setVec3("light_direction", direction);
 }
 
+void DirectionalLight::setCollisionBox()
+{
+	collisionBox.back   = 0.0f;
+	collisionBox.front  = 0.0f;
+	collisionBox.left   = 0.0f;
+	collisionBox.right  = 0.0f;
+	collisionBox.top    = 0.0f;
+	collisionBox.bottom = 0.0f;
+}
+
 
 Color DirectionalLight::getColor() const
 {

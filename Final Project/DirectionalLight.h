@@ -37,7 +37,6 @@ class DirectionalLight : public BaseObject
 {
 private: 
 	glm::vec3 direction;
-	glm::vec3 position;
 	Color color;
 
 public:
@@ -45,6 +44,7 @@ public:
 	void setColor(const Color& col);
 	void setPosition(const glm::vec3& pos); // Change position to have transformations possible?
 	void setDirection(const glm::vec3& dir);
+	void setCollisionBox();
 
 	Color getColor() const;
 	glm::vec3 getPosition() const;
