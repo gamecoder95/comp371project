@@ -1,6 +1,8 @@
 #ifndef BASE_OBJECT_H
 #define BASE_OBJECT_H
 
+#include "stdafx.h"
+
 #include "Shader.h"
 
 struct BoundingBox
@@ -34,6 +36,10 @@ public:
 	virtual float getTop() const;
 	virtual float getBottom() const;
 	virtual bool isCollision(const BaseObject& other);
+	virtual void update() = 0;
+	virtual bool isDestroyed() = 0;
+	virtual void destroy() = 0;
+
 	// Meant to be overriden by those that need it!
 	virtual void onCollision(BaseObject& other);
 };

@@ -11,6 +11,7 @@ BaseObject::BaseObject(Shader* shader)
 
 BaseObject::~BaseObject()
 {
+
 }
 
 float BaseObject::getBack() const

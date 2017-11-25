@@ -75,11 +75,11 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\OpenGL\glew\include;C:\OpenGL\glfw\include;$(SolutionDir)/Final Project/glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)glew;$(SolutionDir)glfw;$(SolutionDir)glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>C:\OpenGL\glew\lib\Release\Win32;C:\OpenGL\glfw\lib-vc2015;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)glew\lib\Release\Win32;$(SolutionDir)glfw\lib-vc2015;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>opengl32.lib;glew32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -123,8 +123,10 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ObjectContainer.cpp" />
     <ClCompile Include="objLoader.cpp" />
+    <ClCompile Include="Person.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="VirtualWorldContent.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -133,9 +135,11 @@
     <ClInclude Include="DirectionalLight.h" />
     <ClInclude Include="ObjectContainer.h" />
     <ClInclude Include="objLoader.h" />
+    <ClInclude Include="Person.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Terrain.h" />
     <ClInclude Include="VirtualWorldContent.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

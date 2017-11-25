@@ -33,11 +33,13 @@ struct Color
 	}
 };
 
-class DirectionalLight : public BaseObject
+class DirectionalLight
 {
 private: 
 	glm::vec3 direction;
+	glm::vec3 position;
 	Color color;
+	Shader* shader;
 
 public:
 	DirectionalLight(Shader* shader, const glm::vec3& pos = glm::vec3(0.0f), const glm::vec3& dir = glm::vec3(-1.0f), const Color& col = Color());
