@@ -13,11 +13,22 @@ struct BoundingBox
 	float left; // -x
 	float bottom; // -y
 	float top; // +y
+
+	void scale(float scale)
+	{
+		back *= scale;
+		front *= scale;
+		left *= scale;
+		right *= scale;
+		bottom *= scale;
+		top *= scale;
+	}
 };
 
 class BaseObject
 {
 protected:
+	static const GLfloat SCALE;
 	Shader* shader;
 	BoundingBox collisionBox;
 	glm::vec3 position;

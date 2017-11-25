@@ -5,8 +5,6 @@
 #include "BaseObject.h"
 #include <vector>
 
-// Make fully static?
-
 class ObjectContainer
 {
 private:

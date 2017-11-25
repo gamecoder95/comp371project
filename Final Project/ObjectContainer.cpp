@@ -27,11 +27,14 @@ void ObjectContainer::testAllCollisions(int index)
 {
 	if (index >= 0 && index < object_container.size())
 	{
-		for (int i = 0; i < object_container.size(), i != index; ++i)
+		for (int i = 0; i < object_container.size(); ++i)
 		{
-			if(object_container[index]->isCollision(*object_container[i]))
+			if (index != i)
 			{
-				object_container[index]->onCollision(*object_container[i]);
+				if (object_container[index]->isCollision(*object_container[i]))
+				{
+					object_container[index]->onCollision(*object_container[i]);
+				}
 			}
 		}
 	}

@@ -2,14 +2,17 @@
 #include "Person.h"
 #include <iostream>
 #include <string>
+#include "VirtualWorldContent.h"
 
 
 //--------------- Constructor / Destructor --------------------------------
 
 Person::Person(Shader* sh, Terrain* terrain) : BaseObject(sh)
 {
-	view_matrix = glm::lookAt(view_pos, view_pos + view_dir, glm::vec3(0.0f, 1.0f, 0.0f));
+	view_matrix = glm::lookAt(position, position + view_dir, glm::vec3(0.0f, 1.0f, 0.0f));
 	land = terrain;
+	position = glm::vec3(0.0f, 0.0f, 3.0f);
+	setCollisionBox();
 }
 
 
@@ -64,13 +67,13 @@ void Person::moveFront()
 {
 	if (move_flag){
 		if (fly_flag){
-			float oldz = view_pos[1];
-			view_pos += view_dir * MOVE;
-			view_pos[1] = oldz;
+			float oldz = position[1];
+			position += view_dir * MOVE;
+			position[1] = oldz;
 		}
 		else{
-			view_pos += view_dir * MOVE;
-			view_pos[1] = calcY();
+			position += view_dir * MOVE;
+			position[1] = calcY();
 		}
 	}
 }
@@ -80,13 +83,13 @@ void Person::moveBack()
 {
 	if (move_flag){
 		if (fly_flag){
-			float oldz = view_pos[1];
-			view_pos -= view_dir * MOVE;
-			view_pos[1] = oldz;
+			float oldz = position[1];
+			position -= view_dir * MOVE;
+			position[1] = oldz;
 		}
 		else{
-			view_pos -= view_dir * MOVE;
-			view_pos[1] = calcY();
+			position -= view_dir * MOVE;
+			position[1] = calcY();
 		}
 	}
 }
@@ -95,8 +98,8 @@ void Person::moveBack()
 void Person::moveRight()
 {
 	if (move_flag){
-		view_pos += glm::cross(view_dir, glm::vec3(0.0f, 1.0f, 0.0f)) * MOVE;
-		view_pos[1] = calcY();
+		position += glm::cross(view_dir, glm::vec3(0.0f, 1.0f, 0.0f)) * MOVE;
+		position[1] = calcY();
 	}
 }
 
@@ -104,20 +107,20 @@ void Person::moveRight()
 void Person::moveLeft()
 {
 	if (move_flag){
-		view_pos -= glm::cross(view_dir, glm::vec3(0.0f, 1.0f, 0.0f)) * MOVE;
-		view_pos[1] = calcY();
+		position -= glm::cross(view_dir, glm::vec3(0.0f, 1.0f, 0.0f)) * MOVE;
+		position[1] = calcY();
 	}
 }
 
 void Person::moveUp(){
 	if (move_flag && fly_flag){
-		view_pos += glm::vec3(0.0f, 1.0f, 0.0f) * MOVE;
+		position += glm::vec3(0.0f, 1.0f, 0.0f) * MOVE;
 	}
 }
 
 void Person::moveDown(){
 	if (move_flag && fly_flag){
-		view_pos -= glm::vec3(0.0f, 1.0f, 0.0f) * MOVE;
+		position -= glm::vec3(0.0f, 1.0f, 0.0f) * MOVE;
 	}
 }
 
@@ -125,10 +128,69 @@ void Person::moveDown(){
 //isFly is true
 float Person::calcY(){
 	if (fly_flag){
-		return view_pos[1];
+		return position[1];
 	}
 
-	return land->getHeight(view_pos[0], view_pos[2]);
+	return land->getHeight(position[0], position[2]);
+}
+
+// -------------------- Collision Functions ----------------------------------------------
+
+// For now, set the collision box to be merely a unit volume cube
+// TODO: adjust the y-xis values so that maybe it works better with climbing up hills
+void Person::setCollisionBox()
+{
+	float collBoxVal = 1.0f;
+	// z-axis
+	collisionBox.back = -collBoxVal;
+	collisionBox.front = collBoxVal;
+
+	// x-axis
+	collisionBox.left = -collBoxVal;
+	collisionBox.right = collBoxVal;
+
+	// y-axis
+	collisionBox.bottom = -collBoxVal;
+	collisionBox.top = collBoxVal;
+}
+
+// When colliding with another object, prevent the person from going through
+// This is done by checking the collisions on each axis, and then offsetting the player
+// by the correct amount backwards
+void Person::onCollision(BaseObject& other)
+{
+	cout << "HIT" << endl;
+	dynamic_cast<Object&>(other).destroy();
+
+	//// x-collision
+	//if (getLeft() < other.getRight())
+	//{
+	//	position.x += (other.getRight() - getLeft());
+	//}
+	//else if (getRight() > other.getLeft())
+	//{
+	//	position.x += (other.getLeft() - getRight());
+	//}
+
+	//// z-collision
+	//if (getFront() > other.getBack())
+	//{
+	//	position.z += (other.getBack() - getFront());
+	//}
+	//else if (getBack() < other.getFront())
+	//{
+	//	position.z += (other.getFront() - getBack());
+	//}
+
+	//// y-collision
+	//if (getBottom() < other.getTop())
+	//{
+	//	position.y += (other.getTop() - getBottom());
+	//}
+	//else if (getTop() > other.getBottom())
+	//{
+	//	position.y += (other.getBottom() - getTop());
+	//}
 }
 
 
@@ -137,8 +199,9 @@ float Person::calcY(){
 //this should be called in the main game loop, will update the view_matrix for the entire scene
 void Person::update()
 {
-	view_matrix = glm::lookAt(view_pos, view_pos + view_dir, glm::vec3(0.0f, 1.0f, 0.0f));
+	view_matrix = glm::lookAt(position, position + view_dir, glm::vec3(0.0f, 1.0f, 0.0f));
 	shader->setMat4("view_matrix", view_matrix);
+	shader->setVec3("view_pos", position);
 }
 
 void Person::destroy(){

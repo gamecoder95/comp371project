@@ -10,7 +10,7 @@ class Object : public BaseObject
 protected:
 	glm::mat4 model_matrix;
 	Color color;
-	static const GLfloat SCALE;
+	//static const GLfloat SCALE;
 	float initial_scale_factor;
 
 	GLuint VAO;

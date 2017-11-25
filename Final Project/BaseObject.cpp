@@ -2,7 +2,8 @@
 
 #include "BaseObject.h"
 
-
+// Static constants here
+const GLfloat BaseObject::SCALE = 0.1f;
 
 BaseObject::BaseObject(Shader* shader)
 {

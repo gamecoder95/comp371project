@@ -7,7 +7,7 @@
 
 
 // static constants here
-const GLfloat Object::SCALE = 0.1f;
+//const GLfloat Object::SCALE = 0.1f;
 
 Object::Object(const std::string& file_name, Shader* shader)
 	: BaseObject(shader)
@@ -145,6 +145,9 @@ void Object::initState()
 {
 	model_matrix = glm::mat4(1.0f);
 	scale(SCALE);
+	scale(initial_scale_factor);
+	collisionBox.scale(SCALE);
+	collisionBox.scale(initial_scale_factor);
 	// color = glm::vec3(0.0f);
 }
 
@@ -152,7 +155,7 @@ void Object::initState()
 // call: Object::drawState()
 void Object::drawState()
 {
-	scale(initial_scale_factor);
+	
 	// Set uniforms
 	setModelMatrix();
 	setColor();
