@@ -288,9 +288,10 @@ __pycache__/
 *.xsd.cs
 
 Final Project/Debug/
-Final Project/Final Project.vcxproj.filters
-Final Project/Final Project.vcxproj
-Final Project/glm/
+"Final Project/Final Project.vcxproj.filters"
+"Final Project/Final Project.vcxproj"
 Final Project/glfw3.dll
 Final Project/glew32.dll
-
+glew/
+glfw/
+glm/

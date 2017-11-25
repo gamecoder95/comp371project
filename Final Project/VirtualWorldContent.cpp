@@ -160,9 +160,9 @@ void Object::drawState()
 // Not meant to be overriden
 void Object::update()
 {
-	initState();
 	modState();
 	drawState();
+	initState();
 }
 
 bool Object::loadOBJ(
