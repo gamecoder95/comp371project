@@ -208,12 +208,10 @@ void generateChunk(ObjectContainer& obj_container, Shader &mainShader, int chunk
 	cout << "Igloos: " << endl;
 	for (int i = 0; i < nbr_igloos; i++)
 	{
-		/*
 		GLfloat x = static_cast<float>(dist_x(mt));
 		GLfloat z = static_cast<float>(dist_z(mt));
 		cout << "i: " << i << " x: " << x << " z: " << z << endl;
 		obj_container.addObject(new Igloo(&mainShader, glm::vec3(x, 0.0f, z)));
-		*/
 	}
 
 	std::uniform_int_distribution<int> dist_type(1, NBR_DIFF_ANIMALS);
