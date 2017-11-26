@@ -1,0 +1,7 @@
+﻿  Lab3.cpp
+LINK : warning LNK4075: ignoring '/INCREMENTAL' due to '/FORCE' specification
+Lab3.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/OPT:LBR' specification
+objloader.obj : warning LNK4006: "bool __cdecl loadOBJ(char const *,class std::vector<struct glm::mesh_rotation<float,0>,class std::allocator<struct glm::mesh_rotation<float,0> > > &,class std::vector<struct glm::mesh_rotation<float,0>,class std::allocator<struct glm::mesh_rotation<float,0> > > &,class std::vector<struct glm::tvec2<float,0>,class std::allocator<struct glm::tvec2<float,0> > > &)" (?loadOBJ@@YA_NPBDAAV?$vector@U?$mesh_rotation@M$0A@@glm@@V?$allocator@U?$mesh_rotation@M$0A@@glm@@@std@@@std@@1AAV?$vector@U?$tvec2@M$0A@@glm@@V?$allocator@U?$tvec2@M$0A@@glm@@@std@@@2@@Z) already defined in Lab3.obj; second definition ignored
+C:\Users\Jocelyn\Desktop\Lab3\Lab3\VS2013_Solution\COMP371_Lab3\Debug\COMP371_Lab3.exe : warning LNK4088: image being generated due to /FORCE option; image may not run
+  COMP371_Lab3.vcxproj -> C:\Users\Jocelyn\Desktop\Lab3\Lab3\VS2013_Solution\COMP371_Lab3\Debug\COMP371_Lab3.exe
+  COMP371_Lab3.vcxproj -> C:\Users\Jocelyn\Desktop\Lab3\Lab3\VS2013_Solution\COMP371_Lab3\Debug\COMP371_Lab3.pdb (Full PDB)
