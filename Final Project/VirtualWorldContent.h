@@ -10,7 +10,7 @@ class Object : public BaseObject
 protected:
 	glm::mat4 model_matrix;
 	Color color;
-	static const GLfloat SCALE;
+	//static const GLfloat SCALE;
 	float initial_scale_factor;
 
 	GLuint VAO;
@@ -53,7 +53,7 @@ public:
 	void translate(const glm::vec3& translate_vect);
 	void rotate(const glm::vec3& rotation_axis, GLfloat angle_deg);
 	void destroy();
-	// bool testCollision(const Object& other); 
+	bool isDestroyed();
 };
 
 class PolarBear : public Object

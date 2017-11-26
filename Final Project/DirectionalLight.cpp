@@ -1,8 +1,9 @@
+#include "stdafx.h"
 #include "DirectionalLight.h"
 
 DirectionalLight::DirectionalLight(Shader* shader, const glm::vec3& pos, const glm::vec3& dir, const Color& col)
-	: BaseObject(shader)
 {
+	this->shader = shader;
 	setColor(col);
 	setPosition(pos);
 	setDirection(dir);
@@ -27,17 +28,6 @@ void DirectionalLight::setDirection(const glm::vec3& dir)
 	direction = dir;
 	shader->setVec3("light_direction", direction);
 }
-
-void DirectionalLight::setCollisionBox()
-{
-	collisionBox.back   = 0.0f;
-	collisionBox.front  = 0.0f;
-	collisionBox.left   = 0.0f;
-	collisionBox.right  = 0.0f;
-	collisionBox.top    = 0.0f;
-	collisionBox.bottom = 0.0f;
-}
-
 
 Color DirectionalLight::getColor() const
 {

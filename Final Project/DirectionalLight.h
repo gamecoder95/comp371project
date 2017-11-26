@@ -1,6 +1,7 @@
 #ifndef LIGHT_H
 #define LIGHT_H
 
+#include "stdafx.h"
 #include "Shader.h"
 #include "BaseObject.h"
 
@@ -33,18 +34,19 @@ struct Color
 	}
 };
 
-class DirectionalLight : public BaseObject
+class DirectionalLight
 {
 private: 
 	glm::vec3 direction;
+	glm::vec3 position;
 	Color color;
+	Shader* shader;
 
 public:
 	DirectionalLight(Shader* shader, const glm::vec3& pos = glm::vec3(0.0f), const glm::vec3& dir = glm::vec3(-1.0f), const Color& col = Color());
 	void setColor(const Color& col);
 	void setPosition(const glm::vec3& pos); // Change position to have transformations possible?
 	void setDirection(const glm::vec3& dir);
-	void setCollisionBox();
 
 	Color getColor() const;
 	glm::vec3 getPosition() const;

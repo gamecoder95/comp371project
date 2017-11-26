@@ -1,13 +1,15 @@
+
+
 #include "stdafx.h"
 
-#include "VirtualWorldContent.h"
+#include "Object.h"
 #include <stdio.h>
 #include <cstring>
 #include <iostream>
 
 
 // static constants here
-//const GLfloat Object::SCALE = 0.1f;
+const GLfloat Object::SCALE = 0.05f;
 
 Object::Object(const std::string& file_name, Shader* shader)
 	: BaseObject(shader)
@@ -34,20 +36,17 @@ void Object::setUpObject()
 	glGenBuffers(1, &VBO_vertices);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO_vertices);
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), &vertices.front(), GL_STATIC_DRAW);
-	glVertexAttribPointer(shader->getAttribLoc("position"), 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
-	glEnableVertexAttribArray(shader->getAttribLoc("position"));// Replace with non-hard-coded value
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+	glEnableVertexAttribArray(0);// Replace with non-hard-coded value
 
 	glGenBuffers(1, &VBO_normals);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO_normals);
 	glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(glm::vec3), &normals.front(), GL_STATIC_DRAW);
-	glVertexAttribPointer(shader->getAttribLoc("in_normal"), 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
-	glEnableVertexAttribArray(shader->getAttribLoc("in_normal"));// Replace with non-hard-coded value
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+	glEnableVertexAttribArray(1);// Replace with non-hard-coded value
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
-
-	// Collision box
-	setCollisionBox();
 }
 
 void Object::destroy()
@@ -58,11 +57,6 @@ void Object::destroy()
 	VAO = VBO_vertices = VBO_normals = 0;
 }
 
-bool Object::isDestroyed()
-{
-	return VAO == 0;
-}
-
 void Object::translate(const glm::vec3& translate_vect)
 {
 	model_matrix = glm::translate(model_matrix, translate_vect);
@@ -70,7 +64,7 @@ void Object::translate(const glm::vec3& translate_vect)
 
 void Object::rotate(const glm::vec3& rotation_axis, GLfloat angle_deg)
 {
-	model_matrix = glm::rotate(model_matrix, glm::radians(angle_deg), glm::normalize(rotation_axis));
+	model_matrix = glm::rotate(model_matrix, glm::radians(angle_deg), rotation_axis);
 }
 
 void Object::scale(const glm::vec3& scale)
@@ -90,54 +84,7 @@ void Object::setModelMatrix()
 
 void Object::setColor()
 {
-	shader->setVec3("our_color.ambient", color.ambient);
-	shader->setVec3("our_color.diffuse", color.diffuse);
-	shader->setVec3("our_color.specular", color.specular);
-}
-
-void Object::setCollisionBox()
-{
-	glm::vec3 min = vertices[0];
-	glm::vec3 max = vertices[0];
-
-	for (int i = 1; i < vertices.size(); ++i)
-	{
-		// Min values
-		if (min.x > vertices[i].x)
-		{
-			min.x = vertices[i].x;
-		}
-		if (min.z > vertices[i].z)
-		{
-			min.z = vertices[i].z;
-		}
-		if (min.y > vertices[i].y)
-		{
-			min.y = vertices[i].y;
-		}
-
-		// Max values
-		if (max.x < vertices[i].x)
-		{
-			max.x = vertices[i].x;
-		}
-		if (max.z < vertices[i].z)
-		{
-			max.z = vertices[i].z;
-		}
-		if (max.y < vertices[i].y)
-		{
-			max.y = vertices[i].y;
-		}
-	}
-	collisionBox.back  = min.z;
-	collisionBox.front = max.z;
-
-	collisionBox.left  = min.x;
-	collisionBox.right = max.x;
-
-	collisionBox.bottom = min.y;
-	collisionBox.top    = max.y;
+	shader->setVec3("our_color", color);
 }
 
 // When overriding this, put Object::initState(); at the top
@@ -145,9 +92,6 @@ void Object::initState()
 {
 	model_matrix = glm::mat4(1.0f);
 	scale(SCALE);
-	scale(initial_scale_factor);
-	collisionBox.scale(SCALE);
-	collisionBox.scale(initial_scale_factor);
 	// color = glm::vec3(0.0f);
 }
 
@@ -155,12 +99,13 @@ void Object::initState()
 // call: Object::drawState()
 void Object::drawState()
 {
-	
 	// Set uniforms
 	setModelMatrix();
 	setColor();
-	//TODO: Implement color for object
+
+	// Implement color for object
 	glBindVertexArray(VAO);
+	// Perhaps switch to EBO?
 	glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 	glBindVertexArray(0);
 }
@@ -168,9 +113,9 @@ void Object::drawState()
 // Not meant to be overriden
 void Object::update()
 {
+	initState();
 	modState();
 	drawState();
-	initState();
 }
 
 bool Object::loadOBJ(
@@ -275,105 +220,4 @@ bool Object::loadOBJ(
 	}
 
 	return true;
-}
-
-
-
-PolarBear::PolarBear(Shader* shader, const glm::vec3& m)
-	: Object("res/objects/polarbear.obj", shader)
-{
-	position = m;
-	initial_scale_factor = SCALE_POLAR_BEAR;
-}
-
-
-PolarBear::~PolarBear()
-{
-}
-
-void PolarBear::modState()
-{
-	translate(position);
-	if (position.x <= 0.0f)
-	{
-		color = glm::vec3(1.0f, 0.0f, 0.0f);
-	}
-	else
-	{
-		color = glm::vec3(0.0f, 0.0f, 1.0f);
-	}
-}
-
-Eskimo::Eskimo(Shader* shader, const glm::vec3& m)
-	: Object("res/objects/nana.obj", shader)
-{
-	initial_scale_factor = SCALE_ESKIMO;
-	position = m;
-}
-
-Eskimo::~Eskimo()
-{
-}
-
-void Eskimo::modState()
-{
-	translate(position);
-	if (position.x <= 0.0f)
-	{
-		color = glm::vec3(1.0f, 0.0f, 0.0f);
-	}
-	else
-	{
-		color = glm::vec3(0.0f, 0.0f, 1.0f);
-	}
-}
-
-Penguin::Penguin(Shader* shader, const glm::vec3& m)
-	: Object("res/objects/penguin.obj", shader)
-{
-	initial_scale_factor = SCALE_PENGUIN;
-	position = m;
-}
-
-
-Penguin::~Penguin()
-{
-}
-
-void Penguin::modState()
-{
-	translate(position);
-	if (position.x <= 0.0f)
-	{
-		color = glm::vec3(1.0f, 0.0f, 0.0f);
-	}
-	else
-	{
-		color = glm::vec3(0.0f, 0.0f, 1.0f);
-	}
-}
-
-Igloo::Igloo(Shader* shader, const glm::vec3& m)
-	: Object("res/objects/igloo_mod.obj", shader)
-{
-	initial_scale_factor = SCALE_IGLOO;
-	position = m;
-}
-
-
-Igloo::~Igloo()
-{
-}
-
-void Igloo::modState()
-{
-	translate(position);
-	if (position.x <= 0.0f)
-	{
-		color = glm::vec3(1.0f, 0.0f, 0.0f);
-	}
-	else
-	{
-		color = glm::vec3(0.0f, 0.0f, 1.0f);
-	}
 }

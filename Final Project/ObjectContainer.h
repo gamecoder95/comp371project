@@ -1,23 +1,25 @@
 #ifndef OBJECTCONTAINER_H
 #define OBJECTCONTAINER_H
 
-#include "VirtualWorldContent.h"
-
-// Make fully static?
+#include "stdafx.h"
+#include "BaseObject.h"
+#include <vector>
 
 class ObjectContainer
 {
 private:
-	std::vector<Object*> object_container;
+	std::vector<BaseObject*> object_container;
+
+	void testAllCollisions(int index);
 
 public:
 	ObjectContainer();
 	~ObjectContainer();
 
-	void addObject(Object* new_obj);
+	void addObject(BaseObject* new_obj);
 	void removeObject(int index);
 	void removeAll();
-	Object* getObject(int index);
+	BaseObject* getObject(int index);
 	void updateAll();
 
 };
