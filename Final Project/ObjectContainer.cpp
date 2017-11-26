@@ -46,7 +46,7 @@ void ObjectContainer::updateAll()
 	{
 		if (object_container[i]->isDestroyed())
 		{
-			removeObject(i);
+			//removeObject(i);
 		}
 		else
 		{
