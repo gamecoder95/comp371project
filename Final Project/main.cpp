@@ -10,11 +10,22 @@
 #include "VirtualWorldContent.h"
 #include <cstdlib> // for rand() and srand() -> testing object generation
 #include <ctime> // for time() -> testing object generation
+#include <algorithm>
+#include <chrono>
+#include <cstdio>
+#include <random>
 #include "Person.h"
 using namespace std;
 
 const GLuint WIDTH = 800;
 const GLuint HEIGHT = 800;
+
+//TODO: For now 50 x 50 chunks, but we want to make the objects smaller to reduce it to 11 x 11
+//Chunk width and height:
+const int CHUNK_WIDTH = 50; //x coordinate
+const int CHUNK_HEIGHT = 50; //z coordinate
+
+const int NBR_DIFF_ANIMALS = 3;
 
 // The projection and view matrices here are just testing things, will remove when we have 
 // the official camera class
@@ -38,6 +49,16 @@ bool down_flag = false;
 
 //camera
 Person* camera;
+
+//constants for minimum and maximum number of objects in each generated chunk
+const int MIN_NBR_IGLOOS = 1;
+const int MAX_NBR_IGLOOS = 2;
+const int MIN_NBR_ANIMALS = 3;
+const int MAX_NBR_ANIMALS = 8;
+
+//We create a random device for object generation:
+std::random_device rd;
+std::mt19937 mt(rd());
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -173,6 +194,60 @@ static void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	}
 }
 
+void generateChunk(ObjectContainer& obj_container, Shader &mainShader, int chunk_width, int chunk_height)
+{
+	std::uniform_int_distribution<int> dist_igloos(MIN_NBR_IGLOOS, MAX_NBR_IGLOOS);
+	int nbr_igloos = dist_igloos(mt);
+	cout << "nbr igloos: " << nbr_igloos << endl;
+	std::uniform_int_distribution<int> dist_animals(MIN_NBR_ANIMALS, MAX_NBR_ANIMALS);
+	int nbr_animals = dist_animals(mt);
+	cout << "nbr animals: " << nbr_animals << endl;
+
+	std::uniform_int_distribution<int> dist_x(0, chunk_width);
+	std::uniform_int_distribution<int> dist_z(0, chunk_height);
+	cout << "Igloos: " << endl;
+	for (int i = 0; i < nbr_igloos; i++)
+	{
+		/*
+		GLfloat x = static_cast<float>(dist_x(mt));
+		GLfloat z = static_cast<float>(dist_z(mt));
+		cout << "i: " << i << " x: " << x << " z: " << z << endl;
+		obj_container.addObject(new Igloo(&mainShader, glm::vec3(x, 0.0f, z)));
+		*/
+	}
+
+	std::uniform_int_distribution<int> dist_type(1, NBR_DIFF_ANIMALS);
+	cout << "Animals: " << endl;
+	for (int i = 0; i < nbr_animals; i++)
+	{
+		GLfloat x = static_cast<float>(dist_x(mt));
+		GLfloat z = static_cast<float>(dist_z(mt));
+		cout << "i: " << i << " x: " << x << " z: " << z << endl;
+		int type_animal = dist_type(mt);
+		cout << "type: " << type_animal << endl;
+		switch (type_animal)
+		{
+			case 1: obj_container.addObject(new Penguin(&mainShader, glm::vec3(x, 0.0f, z))); break;
+			case 2: obj_container.addObject(new PolarBear(&mainShader, glm::vec3(x, 0.0f, z))); break;
+			case 3: obj_container.addObject(new Eskimo(&mainShader, glm::vec3(x, 0.0f, z)));
+		}
+	}
+	/*
+	// Create only one set of objects -> once!
+	GLfloat x = static_cast<float>(min + (max - min + 1) * rand() * fraction);
+	GLfloat z = static_cast<float>(min + (max - min + 1) * rand() * fraction);
+	obj_container.addObject(new Penguin(&mainShader, glm::vec3(x, 0.0f, z)));
+	GLfloat x2 = static_cast<float>(min + (max - min + 5) * rand() * fraction);
+	GLfloat y2 = static_cast<float>(min + (max - min + 5) * rand() * fraction);
+	obj_container.addObject(new Igloo(&mainShader, glm::vec3(x2, y2, 0.0f)));
+	GLfloat x3 = static_cast<float>(min + (max - min + 10) * rand() * fraction);
+	GLfloat y3 = static_cast<float>(min + (max - min + 10) * rand() * fraction);
+	obj_container.addObject(new PolarBear(&mainShader, glm::vec3(x3, y3, 0.0f)));
+	GLfloat x4 = static_cast<float>(min + (max - min + 20) * rand() * fraction);
+	GLfloat y4 = static_cast<float>(min + (max - min + 20) * rand() * fraction);
+	obj_container.addObject(new Eskimo(&mainShader, glm::vec3(x4, y4, 0.0f)));*/
+}
+
 int main()
 {
 	glfwInit();
@@ -243,6 +318,15 @@ int main()
 	int min = -10, max = 10;
 	double fraction = 1.0 / (static_cast<double>(RAND_MAX) + 1.0);
 
+	generateChunk(obj_container, mainShader, CHUNK_WIDTH, CHUNK_HEIGHT);
+
+	/*
+	GLfloat x = static_cast<float>(min + (max - min + 1) * rand() * fraction);
+	GLfloat y = static_cast<float>(min + (max - min + 1) * rand() * fraction);
+	obj_container.addObject(new Penguin(&mainShader, glm::vec3(x, y, 0.0f)));
+	*/
+
+	/*
 	// Create only one set of objects -> once!
 	GLfloat x = static_cast<float>(min + (max - min + 1) * rand() * fraction);
 	GLfloat y = static_cast<float>(min + (max - min + 1) * rand() * fraction);
@@ -256,7 +340,7 @@ int main()
 	GLfloat x4 = static_cast<float>(min + (max - min + 1) * rand() * fraction);
 	GLfloat y4 = static_cast<float>(min + (max - min + 1) * rand() * fraction);
 	obj_container.addObject(new Eskimo(&mainShader, glm::vec3(x4, y4, 0.0f)));
-
+	*/
 	while (!glfwWindowShouldClose(window))
 	{
 		glfwPollEvents();
@@ -273,25 +357,6 @@ int main()
 
 		// Draw and manipulate stuff here
 
-		// TEST STUFF!
-		if (static_cast<float>(glfwGetTime()) - init_time >= 5.0f)
-		{
-			//GLfloat x = static_cast<float>(min + (max - min + 1) * rand() * fraction);
-			//GLfloat y = static_cast<float>(min + (max - min + 1) * rand() * fraction);
-			//obj_container.addObject(new Penguin(&mainShader, glm::vec3(x, y, 0.0f)));
-			//GLfloat x2 = static_cast<float>(min + (max - min + 1) * rand() * fraction);
-			//GLfloat y2 = static_cast<float>(min + (max - min + 1) * rand() * fraction);
-			//obj_container.addObject(new Igloo(&mainShader, glm::vec3(x2, y2, 0.0f)));
-			//GLfloat x3 = static_cast<float>(min + (max - min + 1) * rand() * fraction);
-			//GLfloat y3 = static_cast<float>(min + (max - min + 1) * rand() * fraction);
-			//obj_container.addObject(new PolarBear(&mainShader, glm::vec3(x3, y3, 0.0f)));
-			//GLfloat x4 = static_cast<float>(min + (max - min + 1) * rand() * fraction);
-			//GLfloat y4 = static_cast<float>(min + (max - min + 1) * rand() * fraction);
-			//obj_container.addObject(new Eskimo(&mainShader, glm::vec3(x4, y4, 0.0f)));
-
-			init_time = glfwGetTime();
-			light.setColor((light.getColor().diffuse == arctic_midnight.diffuse) ? green_northern_light : arctic_midnight);
-		}
 		
 		moveCamera(); //updates camera
 		obj_container.updateAll();

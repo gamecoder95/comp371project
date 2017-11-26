@@ -1,3 +1,4 @@
+#include "stdafx.h"
 //example skeleton code
 //modified from http://learnopengl.com/
 /*

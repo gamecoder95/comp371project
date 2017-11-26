@@ -1,7 +1,7 @@
 #ifndef CUBE_H
 #define CUBE_H
 
-#include "Object.h"
+#include "VirtualWorldContent.h"
 
 class Cube : public Object
 {

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "DirectionalLight.h"
 
 DirectionalLight::DirectionalLight(Shader* shader, const glm::vec3& pos, const glm::vec3& dir, const Color& col)
