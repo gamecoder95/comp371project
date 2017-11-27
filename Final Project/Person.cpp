@@ -159,7 +159,7 @@ void Person::setCollisionBox()
 // by the correct amount backwards
 void Person::onCollision(BaseObject& other)
 {
-	cout << "HIT" << endl;
+	//cout << "HIT" << endl;
 	dynamic_cast<Object&>(other).destroy();
 
 	//// x-collision
