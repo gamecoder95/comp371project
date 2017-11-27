@@ -1,6 +1,6 @@
 //example skeleton code
 //modified from http://learnopengl.com/
-
+/*
 #include "stdafx.h"
 #include <vector>
 
@@ -537,3 +537,4 @@ int main()
 	glfwTerminate();
 	return 0;
 }
+*/
