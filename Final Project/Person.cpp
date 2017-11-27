@@ -21,6 +21,12 @@ Person::~Person()
 	destroy();
 }
 
+// --------------- Getter -----------------------------------------------
+
+glm::vec3 Person::getPosition(){
+	return position;
+}
+
 
 // --------------- Movability tests -------------------------------------
 
@@ -75,6 +81,7 @@ void Person::moveFront()
 			position += view_dir * MOVE;
 			position[1] = calcY();
 		}
+		land->setPlayerPos(position);
 	}
 }
 
@@ -91,6 +98,7 @@ void Person::moveBack()
 			position -= view_dir * MOVE;
 			position[1] = calcY();
 		}
+		land->setPlayerPos(position);
 	}
 }
 
@@ -100,6 +108,7 @@ void Person::moveRight()
 	if (move_flag){
 		position += glm::cross(view_dir, glm::vec3(0.0f, 1.0f, 0.0f)) * MOVE;
 		position[1] = calcY();
+		land->setPlayerPos(position);
 	}
 }
 
@@ -109,18 +118,21 @@ void Person::moveLeft()
 	if (move_flag){
 		position -= glm::cross(view_dir, glm::vec3(0.0f, 1.0f, 0.0f)) * MOVE;
 		position[1] = calcY();
+		land->setPlayerPos(position);
 	}
 }
 
 void Person::moveUp(){
 	if (move_flag && fly_flag){
 		position += glm::vec3(0.0f, 1.0f, 0.0f) * MOVE;
+		land->setPlayerPos(position);
 	}
 }
 
 void Person::moveDown(){
 	if (move_flag && fly_flag){
 		position -= glm::vec3(0.0f, 1.0f, 0.0f) * MOVE;
+		land->setPlayerPos(position);
 	}
 }
 
@@ -130,10 +142,9 @@ float Person::calcY(){
 	if (fly_flag){
 		return position[1];
 	}
-
-	return land->getHeightAt(position[0], position[2]);
+	return position[1]; //temporary
+	//return land->getHeightAt(position[0], position[2]);
 }
-
 // -------------------- Collision Functions ----------------------------------------------
 
 // For now, set the collision box to be merely a unit volume cube

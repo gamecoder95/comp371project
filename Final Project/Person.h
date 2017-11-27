@@ -4,6 +4,7 @@
 #include "BaseObject.h"
 #include "Terrain.h"
 
+
 class Person : public BaseObject
 {
 
@@ -29,6 +30,8 @@ private:
 public:
 	Person(Shader* shader, Terrain* terrain);
 	~Person();
+
+	glm::vec3 getPosition();
 	
 	//updates the view direction
 	void changeDirection(double xdiff, double ydiff);
@@ -54,7 +57,6 @@ public:
 	void update();
 	bool isDestroyed();
 	void destroy();
-	bool isDestroyed(); // TODO: Find a way to not make this mandatory for Person
 
 	// Collision
 	void onCollision(BaseObject& other);

@@ -11,6 +11,7 @@
 #include <cstdlib> // for rand() and srand() -> testing object generation
 #include <ctime> // for time() -> testing object generation
 #include "Person.h"
+
 using namespace std;
 
 const GLuint WIDTH = 800;
@@ -234,11 +235,14 @@ int main()
 	DirectionalLight light(&mainShader, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f), arctic_midnight);
 
 	//creates terrain TODO implement
-	Terrain terrain(&mainshader);
+	Terrain terrain(&mainShader);
 
 	//Camera
 	camera = new Person(&mainShader, &terrain);
 	obj_container.addObject(camera);
+
+
+	obj_container.addObject(&terrain);
 
 	// TEST
 	float init_time = static_cast<float>(glfwGetTime());
