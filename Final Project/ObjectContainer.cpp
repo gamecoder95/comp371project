@@ -44,15 +44,15 @@ void ObjectContainer::updateAll()
 {
 	for (int i = 0; i < object_container.size(); ++i)
 	{
-		if (object_container[i]->isDestroyed())
-		{
-			//removeObject(i);
-		}
-		else
-		{
-			testAllCollisions(i);
+		//if (object_container[i]->isDestroyed())
+		//{
+		//	//removeObject(i);
+		//}
+		//else
+		//{
 			object_container[i]->update();
-		}
+			testAllCollisions(i);
+		//}
 	}
 }
 

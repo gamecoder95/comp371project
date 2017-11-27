@@ -358,10 +358,8 @@ int main()
 
 	// Shaders
 	Shader mainShader("res/shaders/vertex.shader", "res/shaders/fragment.shader");
-	//mainShader.useProgram();
 
 	Shader skyBoxShader("res/shaders/skybox_vertex.shader", "res/shaders/skybox_fragment.shader");
-	//skyBoxShader.useProgram();
 
 	// Skybox textures
 	SkyBox skybox_day(GL_TEXTURE1, "res/images/DayBox/front.jpg", "res/images/DayBox/back.jpg", "res/images/DayBox/right.jpg", "res/images/DayBox/left.jpg", "res/images/DayBox/top.jpg", "res/images/DayBox/bottom.jpg");
@@ -392,12 +390,14 @@ int main()
 	obj_container.addObject(camera);
 
 	// TEST
-	float init_time = static_cast<float>(glfwGetTime());
-	srand(static_cast<unsigned int>(time(0)));
-	int min = -10, max = 10;
-	double fraction = 1.0 / (static_cast<double>(RAND_MAX) + 1.0);
+	//float init_time = static_cast<float>(glfwGetTime());
+	//srand(static_cast<unsigned int>(time(0)));
+	//int min = -10, max = 10;
+	//double fraction = 1.0 / (static_cast<double>(RAND_MAX) + 1.0);
 
-	generateChunk(obj_container, mainShader, CHUNK_WIDTH, CHUNK_HEIGHT);
+	//generateChunk(obj_container, mainShader, CHUNK_WIDTH, CHUNK_HEIGHT);
+	obj_container.addObject(new Igloo(&mainShader, glm::vec3(0.0f)));
+
 
 	/*
 	GLfloat x = static_cast<float>(min + (max - min + 1) * rand() * fraction);
@@ -427,8 +427,6 @@ int main()
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		
-
 		// Draw and manipulate stuff here
 
 		skyBoxShader.useProgram();
@@ -442,11 +440,15 @@ int main()
 		{
 		case 1:
 			skybox_day.drawSkyBox();
+			// Change light color to day color
+			// Change light position to the sun
 			light_color = arctic_midnight;
 			break;
 
 		case 2:
 			skybox_night.drawSkyBox();
+			// Change light color to night color
+			// Change light position to the moon
 			light_color = green_northern_light;
 			break;
 

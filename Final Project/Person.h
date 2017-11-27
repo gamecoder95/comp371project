@@ -8,7 +8,7 @@ class Person : public BaseObject
 {
 
 private:
-	const float MOVE = 0.05f;
+	const float MOVE = 0.005f;//0.05f;
 	bool move_flag = true;
 	bool fly_flag = true;
 

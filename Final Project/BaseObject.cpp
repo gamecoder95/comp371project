@@ -78,3 +78,8 @@ bool BaseObject::isCollision(const BaseObject& other)
 		return true;
 	}
 }
+
+glm::vec3 BaseObject::getPosition()
+{
+	return position;
+}

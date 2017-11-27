@@ -53,6 +53,7 @@ public:
 
 	// Meant to be overriden by those that need it!
 	virtual void onCollision(BaseObject& other);
+	virtual glm::vec3 getPosition();
 };
 
 #endif

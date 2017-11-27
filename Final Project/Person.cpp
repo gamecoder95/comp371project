@@ -159,38 +159,38 @@ void Person::setCollisionBox()
 // by the correct amount backwards
 void Person::onCollision(BaseObject& other)
 {
-	cout << "HIT" << endl;
-	dynamic_cast<Object&>(other).destroy();
+	//cout << "HIT" << endl;
+	other.getPosition() += glm::vec3(1.0f);
 
-	//// x-collision
-	//if (getLeft() < other.getRight())
-	//{
-	//	position.x += (other.getRight() - getLeft());
-	//}
-	//else if (getRight() > other.getLeft())
-	//{
-	//	position.x += (other.getLeft() - getRight());
-	//}
+	// x-collision
+	if (getLeft() < other.getRight())
+	{
+		position.x += (other.getRight() - getLeft());
+	}
+	else if (getRight() > other.getLeft())
+	{
+		position.x += (other.getLeft() - getRight());
+	}
 
-	//// z-collision
-	//if (getFront() > other.getBack())
-	//{
-	//	position.z += (other.getBack() - getFront());
-	//}
-	//else if (getBack() < other.getFront())
-	//{
-	//	position.z += (other.getFront() - getBack());
-	//}
+	// z-collision
+	if (getFront() > other.getBack())
+	{
+		position.z += (other.getBack() - getFront());
+	}
+	else if (getBack() < other.getFront())
+	{
+		position.z += (other.getFront() - getBack());
+	}
 
-	//// y-collision
-	//if (getBottom() < other.getTop())
-	//{
-	//	position.y += (other.getTop() - getBottom());
-	//}
-	//else if (getTop() > other.getBottom())
-	//{
-	//	position.y += (other.getBottom() - getTop());
-	//}
+	// y-collision
+	if (getBottom() < other.getTop())
+	{
+		position.y += (other.getTop() - getBottom());
+	}
+	else if (getTop() > other.getBottom())
+	{
+		position.y += (other.getBottom() - getTop());
+	}
 }
 
 
