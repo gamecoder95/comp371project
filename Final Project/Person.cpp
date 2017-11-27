@@ -213,3 +213,7 @@ bool Person::isDestroyed() {
 	return false;
 }
 
+glm::mat4 Person::getViewMatrix()
+{
+	return view_matrix;
+}

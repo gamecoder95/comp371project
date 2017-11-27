@@ -58,5 +58,8 @@ public:
 	// Collision
 	void onCollision(BaseObject& other);
 
+	//TEST
+	glm::mat4 getViewMatrix();
+
 };
 

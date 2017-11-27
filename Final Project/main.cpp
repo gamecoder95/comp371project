@@ -15,8 +15,7 @@
 #include <cstdio>
 #include <random>
 #include "Person.h"
-#include "objloader.hpp"
-#include "SOIL.h"
+#include "SkyBox.h"
 using namespace std;
 
 const GLuint WIDTH = 800;
@@ -149,23 +148,24 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		fullscreen_flag = !fullscreen_flag;
 	}
 
+	// For skybox test, no longer necessary
 	//rotate model
-	if (key == GLFW_KEY_DOWN && action == GLFW_PRESS){
-		projection_matrix = glm::rotate(projection_matrix, glm::radians(5.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-	}
-		
+	//if (key == GLFW_KEY_DOWN && action == GLFW_PRESS){
+	//	projection_matrix = glm::rotate(projection_matrix, glm::radians(5.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	//}
+	//	
 
-	if (key == GLFW_KEY_UP && action == GLFW_PRESS) {
-		projection_matrix = glm::rotate(projection_matrix, glm::radians(5.0f), glm::vec3(-1.0f, 0.0f, 0.0f));
-	}
+	//if (key == GLFW_KEY_UP && action == GLFW_PRESS) {
+	//	projection_matrix = glm::rotate(projection_matrix, glm::radians(5.0f), glm::vec3(-1.0f, 0.0f, 0.0f));
+	//}
 
-	if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
-		projection_matrix = glm::rotate(projection_matrix, glm::radians(5.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	}
+	//if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
+	//	projection_matrix = glm::rotate(projection_matrix, glm::radians(5.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	//}
 
-	if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
-		projection_matrix = glm::rotate(projection_matrix, glm::radians(5.0f), glm::vec3(0.0f, -1.0f, 0.0f));
-	}
+	//if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
+	//	projection_matrix = glm::rotate(projection_matrix, glm::radians(5.0f), glm::vec3(0.0f, -1.0f, 0.0f));
+	//}
 
 	//Box mode
 	if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
@@ -364,76 +364,9 @@ int main()
 	//skyBoxShader.useProgram();
 
 	// Skybox textures
-	std::vector<glm::vec3> skybox_day_vertices;
-	std::vector<glm::vec3> skybox_day_normals; //unused
-	std::vector<glm::vec2> skybox_day_UVs; //unused
-
-	loadOBJ("res/models/cube.obj", skybox_day_vertices, skybox_day_normals, skybox_day_UVs);
-
-	//prepare skybox VAO
-	GLuint skybox_day_VAO, skybox_day_VerticesVBO;
-
-	glGenVertexArrays(1, &skybox_day_VAO);
-	glBindVertexArray(skybox_day_VAO);
-
-	glGenBuffers(1, &skybox_day_VerticesVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, skybox_day_VerticesVBO);
-	glBufferData(GL_ARRAY_BUFFER, skybox_day_vertices.size() * sizeof(glm::vec3), &skybox_day_vertices.front(), GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), 0);
-	glEnableVertexAttribArray(0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-
-	//prepare skybox cubemap
-	vector<const GLchar*> faces_day;
-	faces_day.push_back("res/images/DayBox/right.jpg");
-	faces_day.push_back("res/images/DayBox/left.jpg");
-	faces_day.push_back("res/images/DayBox/top.jpg");
-	faces_day.push_back("res/images/DayBox/bottom.jpg");
-	faces_day.push_back("res/images/DayBox/back.jpg");
-	faces_day.push_back("res/images/DayBox/front.jpg");
-
-	glActiveTexture(GL_TEXTURE1);
-	GLuint cubemapTexture = loadCubemap(faces_day, textureID_day);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
-
-	//NIGHT VERSION//
-	std::vector<glm::vec3> skybox_night_vertices;
-	std::vector<glm::vec3> skybox_night_normals; //unused
-	std::vector<glm::vec2> skybox_night_UVs; //unused
-
-	loadOBJ("res/models/cube.obj", skybox_night_vertices, skybox_night_normals, skybox_night_UVs);
-
-	//prepare skybox VAO
-	GLuint skybox_night_VAO, skybox_night_VerticesVBO;
-
-	glGenVertexArrays(1, &skybox_night_VAO);
-	glBindVertexArray(skybox_night_VAO);
-
-	glGenBuffers(1, &skybox_night_VerticesVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, skybox_night_VerticesVBO);
-	glBufferData(GL_ARRAY_BUFFER, skybox_night_vertices.size() * sizeof(glm::vec3), &skybox_night_vertices.front(), GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), 0);
-	glEnableVertexAttribArray(0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	glBindVertexArray(0);
-
-	//prepare skybox cubemap
-	vector<const GLchar*> faces_night;
-	faces_night.push_back("res/images/NightBox/right.jpg");
-	faces_night.push_back("res/images/NightBox/left.jpg");
-	faces_night.push_back("res/images/NightBox/top.jpg");
-	faces_night.push_back("res/images/NightBox/bottom.jpg");
-	faces_night.push_back("res/images/NightBox/back.jpg");
-	faces_night.push_back("res/images/NightBox/front.jpg");
-
-	glActiveTexture(GL_TEXTURE2);
-	GLuint cubemapTexture_night = loadCubemap(faces_night, textureID_night);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture_night);
-
+	SkyBox skybox_day(GL_TEXTURE1, "res/images/DayBox/front.jpg", "res/images/DayBox/back.jpg", "res/images/DayBox/right.jpg", "res/images/DayBox/left.jpg", "res/images/DayBox/top.jpg", "res/images/DayBox/bottom.jpg");
+	SkyBox skybox_night(GL_TEXTURE2, "res/images/NightBox/front.jpg", "res/images/NightBox/back.jpg", "res/images/NightBox/right.jpg", "res/images/NightBox/left.jpg", "res/images/NightBox/top.jpg", "res/images/NightBox/bottom.jpg");
+	
 
 	// Object container
 	ObjectContainer obj_container;
@@ -494,39 +427,35 @@ int main()
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glm::mat4 view_matrix = glm::lookAt(eye, center, up);
-		//view_matrix = glm::translate(view_matrix, glm::vec3(0.0f, 0.0f, 1000.0f));
-		//mainShader.setMat4("view_matrix", view_matrix);
-		mainShader.setMat4("projection_matrix", projection_matrix);
-		// DirectionalLight color test
-		//mainShader.setVec3("light_color", glm::vec3(0.54f, 1.0f, 0.47f));
+		
 
 		// Draw and manipulate stuff here
 
 		skyBoxShader.useProgram();
-		glm::mat4 skybox_view = glm::mat4(glm::mat3(view_matrix)); //remove the translation data
+		glm::mat4 skybox_view = glm::mat4(glm::mat3(camera->getViewMatrix())); //remove the translation data
 
 		skyBoxShader.setMat4("view_matrix", skybox_view);
 		skyBoxShader.setMat4("projection_matrix", projection_matrix);
-
 		glUniform1i(skyBoxShader.getUniformLoc("skyboxTexture"), timeOfDay); //timeOfDay calls the texture number to use
 
-		glDepthMask(GL_FALSE);
-		if (timeOfDay == 1) {
-			glBindVertexArray(skybox_day_VAO);
-			glDrawArrays(GL_TRIANGLES, 0, skybox_day_vertices.size());
-			glBindVertexArray(0);
+		switch (timeOfDay)
+		{
+		case 1:
+			skybox_day.drawSkyBox();
 			light_color = arctic_midnight;
-		}
-		if (timeOfDay == 2) {
-			glBindVertexArray(skybox_night_VAO);
-			glDrawArrays(GL_TRIANGLES, 0, skybox_night_vertices.size());
-			glBindVertexArray(0);
+			break;
+
+		case 2:
+			skybox_night.drawSkyBox();
 			light_color = green_northern_light;
+			break;
+
+		default:
+			break;
 		}
-		glDepthMask(GL_TRUE);
 
 		mainShader.useProgram();
+		mainShader.setMat4("projection_matrix", projection_matrix);
 		light.setColor(light_color);
 		moveCamera(); //updates camera
 		obj_container.updateAll();
