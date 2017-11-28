@@ -39,7 +39,7 @@ protected:
 	virtual void modState() = 0; // This is the real meat of the updating
 	virtual void drawState();
 
-	void setCollisionRadius();
+	void setCollisionBox();
 
 public:
 

@@ -12,7 +12,7 @@ Person::Person(Shader* sh, Terrain* terrain) : BaseObject(sh)
 	view_matrix = glm::lookAt(position, position + view_dir, glm::vec3(0.0f, 1.0f, 0.0f));
 	land = terrain;
 	position = glm::vec3(0.0f, 0.0f, 3.0f);
-	setCollisionRadius();
+	setCollisionBox();
 }
 
 
@@ -138,21 +138,22 @@ float Person::calcY(){
 
 // For now, set the collision box to be merely a unit volume cube
 // TODO: adjust the y-xis values so that maybe it works better with climbing up hills
-void Person::setCollisionRadius()
+void Person::setCollisionBox()
 {
-	radius = 1.0f;
-	//float collBoxVal = 1.0f;
-	//// z-axis
-	//collisionBox.back = -collBoxVal;
-	//collisionBox.front = collBoxVal;
+	//radius = 1.0f;
 
-	//// x-axis
-	//collisionBox.left = -collBoxVal;
-	//collisionBox.right = collBoxVal;
+	float collBoxVal = 1.0f * BaseObject::SCALE;
+	// z-axis
+	collisionBox.back = -collBoxVal;
+	collisionBox.front = collBoxVal;
 
-	//// y-axis
-	//collisionBox.bottom = -collBoxVal;
-	//collisionBox.top = collBoxVal;
+	// x-axis
+	collisionBox.left = -collBoxVal;
+	collisionBox.right = collBoxVal;
+
+	// y-axis
+	collisionBox.bottom = -collBoxVal;
+	collisionBox.top = collBoxVal;
 }
 
 // When colliding with another object, prevent the person from going through
@@ -160,41 +161,62 @@ void Person::setCollisionRadius()
 // by the correct amount backwards
 void Person::onCollision(BaseObject& other)
 {
-	cout << "HIT" << endl;
-	glm::vec3 otherRad = other.getRadiusVect(getPosition());
-	glm::vec3 rad = getRadiusVect(other.getPosition());
-	glm::vec3 disp_dir = glm::normalize(otherRad);
-	float disp_mag = BaseObject::getLengthVector(otherRad - rad);
-	position += disp_mag * disp_dir;
+	//cout << "HIT" << endl;
 
+	// Collision Sphere
+	//glm::vec3 otherRad = other.getRadiusVect(getPosition());
+	//glm::vec3 rad = getRadiusVect(other.getPosition());
+	//glm::vec3 disp_dir = glm::normalize(otherRad);
+	//float disp_mag = BaseObject::getLengthVector(otherRad - rad);
+	//position += disp_mag * disp_dir;
+
+	// Collision box
 	// x-collision
-	//if (getLeft() < other.getRight())
-	//{
-	//	position.x += (other.getRight() - getLeft());
-	//}
-	//else if (getRight() > other.getLeft())
-	//{
-	//	position.x += (other.getLeft() - getRight());
-	//}
+	if (getRight() > other.getRight() && getLeft() < other.getRight())
+	{
+		if (!BaseObject::areFloatsEqual(other.getRight(), getLeft()))
+		{
+			position.x += (other.getRight() - getLeft());
+		}
+	}
+	else if (getLeft() < other.getLeft() && getRight() > other.getLeft())
+	{
+		if (!BaseObject::areFloatsEqual(other.getLeft(), getRight()))
+		{
+			position.x += (other.getLeft() - getRight());
+		}
+	}
 
-	//// z-collision
-	//if (getFront() > other.getBack())
-	//{
-	//	position.z += (other.getBack() - getFront());
-	//}
-	//else if (getBack() < other.getFront())
-	//{
-	//	position.z += (other.getFront() - getBack());
-	//}
+	// z-collision
+	if (getBack() > other.getBack() && getBack() < other.getFront())
+	{
+		if (!BaseObject::areFloatsEqual(other.getFront(), getBack()))
+		{
+			position.z += (other.getFront() - getBack());
+		}
+	}
+	else if (getFront() < other.getFront() && getFront() > other.getBack())
+	{
+		if (!BaseObject::areFloatsEqual(other.getBack(), getFront()))
+		{
+			position.z += (other.getBack() - getFront());
+		}
+	}
 
-	//// y-collision
-	//if (getBottom() < other.getTop())
+	// y-collision
+	//if (getBottom() > other.getBottom() && getBottom() < other.getTop())
 	//{
-	//	position.y += (other.getTop() - getBottom());
+	//	if (!BaseObject::areFloatsEqual(other.getTop(), getBottom()))
+	//	{
+	//		position.y += (other.getTop() - getBottom());
+	//	}
 	//}
-	//else if (getTop() > other.getBottom())
+	//else if (getTop() < other.getTop() && getTop() > other.getBottom())
 	//{
-	//	position.y += (other.getBottom() - getTop());
+	//	if (!BaseObject::areFloatsEqual(other.getBottom(), getTop()))
+	//	{
+	//		position.y += (other.getBottom() - getTop());
+	//	}
 	//}
 }
 

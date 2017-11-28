@@ -47,7 +47,7 @@ void Object::setUpObject()
 	glBindVertexArray(0);
 
 	// Collision sphere
-	setCollisionRadius();
+	setCollisionBox();
 }
 
 void Object::destroy()
@@ -95,60 +95,66 @@ void Object::setColor()
 	shader->setVec3("our_color.specular", color.specular);
 }
 
-void Object::setCollisionRadius()
+void Object::setCollisionBox()
 {
-	float max_length_xz = 0.0f;
-	for (int i = 0; i < vertices.size(); ++i)
-	{
-		glm::vec3 no_y_i = glm::vec3(vertices[i].x, 0.0f, vertices[i].z);
-		float max_i = BaseObject::getLengthVector(no_y_i);//(abs(vertices[i].x) > abs(vertices[i].z)) ? abs(vertices[i].x) : abs(vertices[i].z);
-		if (max_length_xz < max_i)
-		{
-			max_length_xz = max_i;
-		}
-	}
-	radius = max_length_xz * SCALE;
-	//glm::vec3 min = vertices[0];
-	//glm::vec3 max = vertices[0];
-
-	//for (int i = 1; i < vertices.size(); ++i)
+	// Collision Radius
+	//float max_length_xz = 0.0f;
+	//for (int i = 0; i < vertices.size(); ++i)
 	//{
-	//	// Min values
-	//	if (min.x > vertices[i].x)
+	//	glm::vec3 no_y_i = glm::vec3(vertices[i].x, 0.0f, vertices[i].z);
+	//	float max_i = BaseObject::getLengthVector(no_y_i);//(abs(vertices[i].x) > abs(vertices[i].z)) ? abs(vertices[i].x) : abs(vertices[i].z);
+	//	if (max_length_xz < max_i)
 	//	{
-	//		min.x = vertices[i].x;
-	//	}
-	//	if (min.z > vertices[i].z)
-	//	{
-	//		min.z = vertices[i].z;
-	//	}
-	//	if (min.y > vertices[i].y)
-	//	{
-	//		min.y = vertices[i].y;
-	//	}
-
-	//	// Max values
-	//	if (max.x < vertices[i].x)
-	//	{
-	//		max.x = vertices[i].x;
-	//	}
-	//	if (max.z < vertices[i].z)
-	//	{
-	//		max.z = vertices[i].z;
-	//	}
-	//	if (max.y < vertices[i].y)
-	//	{
-	//		max.y = vertices[i].y;
+	//		max_length_xz = max_i;
 	//	}
 	//}
-	//collisionBox.back  = min.z;
-	//collisionBox.front = max.z;
+	//radius = max_length_xz * SCALE * initial_scale_factor;
 
-	//collisionBox.left  = min.x;
-	//collisionBox.right = max.x;
+	// Collision Box
+	glm::vec3 min = vertices[0];
+	glm::vec3 max = vertices[0];
 
-	//collisionBox.bottom = min.y;
-	//collisionBox.top    = max.y;
+	for (int i = 1; i < vertices.size(); ++i)
+	{
+		// Min values
+		if (min.x > vertices[i].x)
+		{
+			min.x = vertices[i].x;
+		}
+		if (min.z > vertices[i].z)
+		{
+			min.z = vertices[i].z;
+		}
+		if (min.y > vertices[i].y)
+		{
+			min.y = vertices[i].y;
+		}
+
+		// Max values
+		if (max.x < vertices[i].x)
+		{
+			max.x = vertices[i].x;
+		}
+		if (max.z < vertices[i].z)
+		{
+			max.z = vertices[i].z;
+		}
+		if (max.y < vertices[i].y)
+		{
+			max.y = vertices[i].y;
+		}
+	}
+	collisionBox.back  = min.z;
+	collisionBox.front = max.z;
+
+	collisionBox.left  = min.x;
+	collisionBox.right = max.x;
+
+	collisionBox.bottom = min.y;
+	collisionBox.top    = max.y;
+
+	// Scale
+	collisionBox.scale(SCALE);
 }
 
 // When overriding this, put Object::initState(); at the top
@@ -157,8 +163,6 @@ void Object::initState()
 	model_matrix = glm::mat4(1.0f);
 	scale(SCALE);
 	scale(initial_scale_factor);
-	//collisionBox.scale(SCALE);
-	//collisionBox.scale(initial_scale_factor);
 	// color = glm::vec3(0.0f);
 }
 
@@ -300,6 +304,7 @@ PolarBear::PolarBear(Shader* shader, const glm::vec3& m)
 {
 	position = m;
 	initial_scale_factor = SCALE_POLAR_BEAR;
+	collisionBox.scale(initial_scale_factor);
 }
 
 
@@ -325,6 +330,7 @@ Eskimo::Eskimo(Shader* shader, const glm::vec3& m)
 {
 	initial_scale_factor = SCALE_ESKIMO;
 	position = m;
+	collisionBox.scale(initial_scale_factor);
 }
 
 Eskimo::~Eskimo()
@@ -349,6 +355,7 @@ Penguin::Penguin(Shader* shader, const glm::vec3& m)
 {
 	initial_scale_factor = SCALE_PENGUIN;
 	position = m;
+	collisionBox.scale(initial_scale_factor);
 }
 
 
@@ -374,6 +381,7 @@ Igloo::Igloo(Shader* shader, const glm::vec3& m)
 {
 	initial_scale_factor = SCALE_IGLOO;
 	position = m;
+	collisionBox.scale(initial_scale_factor);
 }
 
 

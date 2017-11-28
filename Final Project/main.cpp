@@ -396,7 +396,7 @@ int main()
 	//double fraction = 1.0 / (static_cast<double>(RAND_MAX) + 1.0);
 
 	//generateChunk(obj_container, mainShader, CHUNK_WIDTH, CHUNK_HEIGHT);
-	obj_container.addObject(new Igloo(&mainShader, glm::vec3(0.0f, 0.0f, -10.0f)));
+	obj_container.addObject(new PolarBear(&mainShader, glm::vec3(0.0f, 0.0f, -10.0f)));
 
 
 	/*
