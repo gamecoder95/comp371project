@@ -5,7 +5,7 @@
 // Static constants here
 const GLfloat BaseObject::SCALE = 0.1f;
 
-BaseObject::BaseObject(Shader* shader)
+BaseObject::BaseObject(Shader* shader, const std::string& type)
 {
 	this->shader = shader;
 }

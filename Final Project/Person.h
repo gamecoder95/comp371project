@@ -28,10 +28,12 @@ private:
 	void setCollisionBox();
 
 public:
+
 	Person(Shader* shader, Terrain* terrain);
 	~Person();
 
 	glm::vec3 getPosition();
+	std::string getType();
 	
 	//updates the view direction
 	void changeDirection(double xdiff, double ydiff);

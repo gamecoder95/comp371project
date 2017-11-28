@@ -7,14 +7,13 @@
 
 //--------------- Constructor / Destructor --------------------------------
 
-Person::Person(Shader* sh, Terrain* terrain) : BaseObject(sh)
+Person::Person(Shader* sh, Terrain* terrain) : BaseObject(sh, "Person")
 {
 	view_matrix = glm::lookAt(position, position + view_dir, glm::vec3(0.0f, 1.0f, 0.0f));
 	land = terrain;
 	position = glm::vec3(0.0f, 0.0f, 3.0f);
 	setCollisionBox();
 }
-
 
 Person::~Person()
 {
@@ -170,38 +169,41 @@ void Person::setCollisionBox()
 // by the correct amount backwards
 void Person::onCollision(BaseObject& other)
 {
-	cout << "HIT" << endl;
-	dynamic_cast<Object&>(other).destroy();
+	if (dynamic_cast<Terrain*>(&other) == nullptr){
+		cout << "HIT" << endl;
+		//dynamic_cast<Object&>(other).destroy();
 
-	//// x-collision
-	//if (getLeft() < other.getRight())
-	//{
-	//	position.x += (other.getRight() - getLeft());
-	//}
-	//else if (getRight() > other.getLeft())
-	//{
-	//	position.x += (other.getLeft() - getRight());
-	//}
 
-	//// z-collision
-	//if (getFront() > other.getBack())
-	//{
-	//	position.z += (other.getBack() - getFront());
-	//}
-	//else if (getBack() < other.getFront())
-	//{
-	//	position.z += (other.getFront() - getBack());
-	//}
+		//// x-collision
+		//if (getLeft() < other.getRight())
+		//{
+		//	position.x += (other.getRight() - getLeft());
+		//}
+		//else if (getRight() > other.getLeft())
+		//{
+		//	position.x += (other.getLeft() - getRight());
+		//}
 
-	//// y-collision
-	//if (getBottom() < other.getTop())
-	//{
-	//	position.y += (other.getTop() - getBottom());
-	//}
-	//else if (getTop() > other.getBottom())
-	//{
-	//	position.y += (other.getBottom() - getTop());
-	//}
+		//// z-collision
+		//if (getFront() > other.getBack())
+		//{
+		//	position.z += (other.getBack() - getFront());
+		//}
+		//else if (getBack() < other.getFront())
+		//{
+		//	position.z += (other.getFront() - getBack());
+		//}
+
+		//// y-collision
+		//if (getBottom() < other.getTop())
+		//{
+		//	position.y += (other.getTop() - getBottom());
+		//}
+		//else if (getTop() > other.getBottom())
+		//{
+		//	position.y += (other.getBottom() - getTop());
+		//}
+	}
 }
 
 
@@ -223,4 +225,6 @@ void Person::destroy(){
 bool Person::isDestroyed() {
 	return false;
 }
+
+
 

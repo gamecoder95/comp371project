@@ -1,13 +1,15 @@
 #include "stdafx.h"
 #include "Terrain.h"
+#include "Person.h"
 #include <iostream>
 
 // -------------------------------------- Terrain --------------------------------------
+
 Terrain::~Terrain(){
 	destroy();
 }
 
-Terrain::Terrain(Shader* sh) : BaseObject(sh){
+Terrain::Terrain(Shader* sh) : BaseObject(sh, "Terrain"){
 
 	visibleChunk = vector<vector<Chunk>>();
 
@@ -21,7 +23,7 @@ Terrain::Terrain(Shader* sh) : BaseObject(sh){
 		visibleChunk.push_back(temp);
 	}
 
-
+	setCollisionBox();
 }
 
 float Terrain::getHeightAt(float x, float z){
@@ -67,4 +69,39 @@ glm::vec3 Terrain::getPlayerPos(){
 
 	return playerPos;
 }
+
+void Terrain::setCollisionBox(){
+	collisionBox.back = visibleChunk[0][0].SIZE / 2.0f;
+	collisionBox.front = visibleChunk[0][0].SIZE / 2.0f;
+	collisionBox.left = visibleChunk[0][0].SIZE / 2.0f;
+	collisionBox.right = visibleChunk[0][0].SIZE / 2.0f;
+	collisionBox.top = INT_MAX;
+	collisionBox.bottom = INT_MAX;
+}
+
+void Terrain::onCollision(BaseObject& other){
+	cout << "Terrain collision detected" << endl;
+	if (dynamic_cast<Person*>(&other) != nullptr && isCollision(other)){
+		//TODO add new chunk generation
+		cout << "Player collision with New chunk border" << endl;
+	}
+}
+
+bool Terrain::isCollision(const BaseObject& other){
+	if (other.getBack() < this->getFront()
+		|| other.getFront() > this->getBack()
+		|| other.getRight() > this->getLeft()
+		|| other.getLeft() < this->getRight()
+		|| other.getTop() > this->getBottom()
+		|| other.getBottom() < this->getTop())
+	{
+		return false;
+	}
+	else
+	{
+		return true;
+	}
+}
+
+
 

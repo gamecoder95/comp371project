@@ -37,7 +37,8 @@ protected:
 	virtual void setCollisionBox();
 
 public:
-	BaseObject(Shader* shader);
+
+	BaseObject(Shader* shader, const std::string& type);
 	~BaseObject();
 
 	virtual float getBack() const;

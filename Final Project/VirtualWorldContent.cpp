@@ -4,13 +4,14 @@
 #include <stdio.h>
 #include <cstring>
 #include <iostream>
+#include <string>
 
 
 // static constants here
 //const GLfloat Object::SCALE = 0.1f;
 
 Object::Object(const std::string& file_name, Shader* shader)
-	: BaseObject(shader)
+	: BaseObject(shader, "World Object")
 {
 	// Improve error-handling here
 	if (loadOBJ(file_name.c_str(), vertices, normals, UVs))
@@ -276,7 +277,6 @@ bool Object::loadOBJ(
 
 	return true;
 }
-
 
 
 PolarBear::PolarBear(Shader* shader, const glm::vec3& m)
