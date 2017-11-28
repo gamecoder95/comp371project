@@ -46,8 +46,8 @@ void Object::setUpObject()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-	// Collision box
-	setCollisionBox();
+	// Collision sphere
+	setCollisionRadius();
 }
 
 void Object::destroy()
@@ -95,49 +95,60 @@ void Object::setColor()
 	shader->setVec3("our_color.specular", color.specular);
 }
 
-void Object::setCollisionBox()
+void Object::setCollisionRadius()
 {
-	glm::vec3 min = vertices[0];
-	glm::vec3 max = vertices[0];
-
-	for (int i = 1; i < vertices.size(); ++i)
+	float max_length_xz = 0.0f;
+	for (int i = 0; i < vertices.size(); ++i)
 	{
-		// Min values
-		if (min.x > vertices[i].x)
+		glm::vec3 no_y_i = glm::vec3(vertices[i].x, 0.0f, vertices[i].z);
+		float max_i = BaseObject::getLengthVector(no_y_i);//(abs(vertices[i].x) > abs(vertices[i].z)) ? abs(vertices[i].x) : abs(vertices[i].z);
+		if (max_length_xz < max_i)
 		{
-			min.x = vertices[i].x;
-		}
-		if (min.z > vertices[i].z)
-		{
-			min.z = vertices[i].z;
-		}
-		if (min.y > vertices[i].y)
-		{
-			min.y = vertices[i].y;
-		}
-
-		// Max values
-		if (max.x < vertices[i].x)
-		{
-			max.x = vertices[i].x;
-		}
-		if (max.z < vertices[i].z)
-		{
-			max.z = vertices[i].z;
-		}
-		if (max.y < vertices[i].y)
-		{
-			max.y = vertices[i].y;
+			max_length_xz = max_i;
 		}
 	}
-	collisionBox.back  = min.z;
-	collisionBox.front = max.z;
+	radius = max_length_xz * SCALE;
+	//glm::vec3 min = vertices[0];
+	//glm::vec3 max = vertices[0];
 
-	collisionBox.left  = min.x;
-	collisionBox.right = max.x;
+	//for (int i = 1; i < vertices.size(); ++i)
+	//{
+	//	// Min values
+	//	if (min.x > vertices[i].x)
+	//	{
+	//		min.x = vertices[i].x;
+	//	}
+	//	if (min.z > vertices[i].z)
+	//	{
+	//		min.z = vertices[i].z;
+	//	}
+	//	if (min.y > vertices[i].y)
+	//	{
+	//		min.y = vertices[i].y;
+	//	}
 
-	collisionBox.bottom = min.y;
-	collisionBox.top    = max.y;
+	//	// Max values
+	//	if (max.x < vertices[i].x)
+	//	{
+	//		max.x = vertices[i].x;
+	//	}
+	//	if (max.z < vertices[i].z)
+	//	{
+	//		max.z = vertices[i].z;
+	//	}
+	//	if (max.y < vertices[i].y)
+	//	{
+	//		max.y = vertices[i].y;
+	//	}
+	//}
+	//collisionBox.back  = min.z;
+	//collisionBox.front = max.z;
+
+	//collisionBox.left  = min.x;
+	//collisionBox.right = max.x;
+
+	//collisionBox.bottom = min.y;
+	//collisionBox.top    = max.y;
 }
 
 // When overriding this, put Object::initState(); at the top
@@ -146,8 +157,8 @@ void Object::initState()
 	model_matrix = glm::mat4(1.0f);
 	scale(SCALE);
 	scale(initial_scale_factor);
-	collisionBox.scale(SCALE);
-	collisionBox.scale(initial_scale_factor);
+	//collisionBox.scale(SCALE);
+	//collisionBox.scale(initial_scale_factor);
 	// color = glm::vec3(0.0f);
 }
 
@@ -155,7 +166,6 @@ void Object::initState()
 // call: Object::drawState()
 void Object::drawState()
 {
-	
 	// Set uniforms
 	setModelMatrix();
 	setColor();
@@ -165,12 +175,18 @@ void Object::drawState()
 	glBindVertexArray(0);
 }
 
+glm::vec3 Object::getPosition() const
+{
+	glm::vec3 mod_pos = glm::vec3(model_matrix * glm::vec4(position, 1.0f));
+	return mod_pos;
+}
+
 // Not meant to be overriden
 void Object::update()
 {
+	initState();
 	modState();
 	drawState();
-	initState();
 }
 
 bool Object::loadOBJ(

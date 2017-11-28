@@ -39,7 +39,7 @@ protected:
 	virtual void modState() = 0; // This is the real meat of the updating
 	virtual void drawState();
 
-	void setCollisionBox();
+	void setCollisionRadius();
 
 public:
 
@@ -54,6 +54,8 @@ public:
 	void rotate(const glm::vec3& rotation_axis, GLfloat angle_deg);
 	void destroy();
 	bool isDestroyed();
+
+	glm::vec3 getPosition() const;
 };
 
 class PolarBear : public Object

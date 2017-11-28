@@ -24,7 +24,7 @@ private:
 	float calcY();
 
 	// Sets the collision box for the Person
-	void setCollisionBox();
+	void setCollisionRadius();
 
 public:
 	Person(Shader* shader, Terrain* terrain);

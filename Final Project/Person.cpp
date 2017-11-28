@@ -12,7 +12,7 @@ Person::Person(Shader* sh, Terrain* terrain) : BaseObject(sh)
 	view_matrix = glm::lookAt(position, position + view_dir, glm::vec3(0.0f, 1.0f, 0.0f));
 	land = terrain;
 	position = glm::vec3(0.0f, 0.0f, 3.0f);
-	setCollisionBox();
+	setCollisionRadius();
 }
 
 
@@ -51,7 +51,7 @@ void Person::changeDirection(double xdiff, double ydiff)
 
 	//makes sure he user is pressing a button to move look around
 	if (move_flag){
-		//makes user not to reck the view matrix (multiplying by 0 isn't good)
+		//makes user not to wreck the view matrix (multiplying by 0 isn't good)
 		if (xdiff != 0 && ydiff != 0){
 			//places the movement 
 			glm::vec4 mod_v4 = glm::vec4(xdiff*0.001, ydiff*-0.001, 0, 1);
@@ -138,20 +138,21 @@ float Person::calcY(){
 
 // For now, set the collision box to be merely a unit volume cube
 // TODO: adjust the y-xis values so that maybe it works better with climbing up hills
-void Person::setCollisionBox()
+void Person::setCollisionRadius()
 {
-	float collBoxVal = 1.0f;
-	// z-axis
-	collisionBox.back = -collBoxVal;
-	collisionBox.front = collBoxVal;
+	radius = 1.0f;
+	//float collBoxVal = 1.0f;
+	//// z-axis
+	//collisionBox.back = -collBoxVal;
+	//collisionBox.front = collBoxVal;
 
-	// x-axis
-	collisionBox.left = -collBoxVal;
-	collisionBox.right = collBoxVal;
+	//// x-axis
+	//collisionBox.left = -collBoxVal;
+	//collisionBox.right = collBoxVal;
 
-	// y-axis
-	collisionBox.bottom = -collBoxVal;
-	collisionBox.top = collBoxVal;
+	//// y-axis
+	//collisionBox.bottom = -collBoxVal;
+	//collisionBox.top = collBoxVal;
 }
 
 // When colliding with another object, prevent the person from going through
@@ -159,7 +160,12 @@ void Person::setCollisionBox()
 // by the correct amount backwards
 void Person::onCollision(BaseObject& other)
 {
-	//cout << "HIT" << endl;
+	cout << "HIT" << endl;
+	glm::vec3 otherRad = other.getRadiusVect(getPosition());
+	glm::vec3 rad = getRadiusVect(other.getPosition());
+	glm::vec3 disp_dir = glm::normalize(otherRad);
+	float disp_mag = BaseObject::getLengthVector(otherRad - rad);
+	position += disp_mag * disp_dir;
 
 	// x-collision
 	//if (getLeft() < other.getRight())
@@ -191,6 +197,7 @@ void Person::onCollision(BaseObject& other)
 	//	position.y += (other.getBottom() - getTop());
 	//}
 }
+
 
 
 // -------------------- Draw functions ---------------------------------------------------

@@ -51,8 +51,12 @@ void ObjectContainer::updateAll()
 		//else
 		//{
 			object_container[i]->update();
-			testAllCollisions(i);
+			
 		//}
+	}
+	for (int i = 0; i < object_container.size(); ++i)
+	{
+		testAllCollisions(i);
 	}
 }
 
