@@ -24,6 +24,7 @@ public:
 
 	void setPlayerPos(glm::vec3 pos);
 	glm::vec3 getPlayerPos();
+	float getHeightAt(float x, float z);
 
 	void update();
 	bool isDestroyed();

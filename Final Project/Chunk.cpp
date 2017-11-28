@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Chunk.h"
 #include <iostream>
+#include "math.h"
 
 
 // ---------------------------------- Chunk -----------------------------------
@@ -26,7 +27,7 @@ Chunk::Chunk(int ox, int oz, float s, Shader* sh)
 	offsetZ = oz;
 	seed = s;
 	float rng = seed + offsetX * 2 + offsetZ / 2;
-	srand(seed);
+	srand(rng);
 	for (int i = 0; i <= SIZE; i++)
 	{
 		vector<glm::vec3> temp;
@@ -41,14 +42,17 @@ Chunk::Chunk(int ox, int oz, float s, Shader* sh)
 	{
 		for (int j = 0; j < grid[i].size(); j++)
 		{
-			grid[i][j].y = -5 + (rand() % (6));
+			if (i != 0 && i != 10 && j != 0 && j != 10)
+			{
+				grid[i][j].y = randomFloat(-0.05, 0.25);
+			}
 		}
 	}
 
 	//TODO figure out exactly how to run interpolation... needs two passes
-	interpolated = grid;	//temporary
-//	interpolated = interpolate(grid, FAR_FRACT);
-//	interpolated = interpolate(flip(interpolated), FAR_FRACT);
+	interpolated = interpolate(grid, FAR_FRACT);
+	interpolated = interpolate(flip(interpolated), FAR_FRACT);
+	curr_fract = FAR_FRACT;	//todo temporary
 	//interpolate(grid, FAR_FRACT);	//TODO figure out a good way of deciding if interpolation is to be done with NEAR_FRACT or FAR_FRACT
 
 	//draw setup
@@ -84,12 +88,90 @@ Chunk::Chunk(int ox, int oz, float s, Shader* sh)
 
 	//TODO collision box
 
-
 }
+
 
 float Chunk::getHeightAt(float x, float z)
 {
-	return grid[x][z].y;	//TODO needs fixing
+
+	//find related points
+	//TODO need to fix
+	int xCoord = abs(fmod(x / curr_fract, interpolated.size()));
+	int zCoord = abs(fmod(z / curr_fract, interpolated.size()));
+
+	cout << xCoord << " " << zCoord << endl;
+	cout << x << " " << interpolated.size() << endl;
+	cout << z << " " << interpolated.front().size() << endl;
+
+	glm::vec3 p1 = interpolated[xCoord][zCoord];
+	glm::vec3 p2;
+	glm::vec3 p3;
+
+	for (int i = 0; i < 2; i++){
+
+		if (xCoord + i - 1 < 0 || xCoord + i + 1 > interpolated.size()){
+			continue;
+		}
+
+		for (int j = 0; j < 2; j++){
+
+			if (zCoord + j - 1 < 0 || zCoord + j + 1 > interpolated.front().size()){
+				continue;
+			}
+
+			//middle point is always part of the triangle
+			if (i == 0 && j == 0){
+				continue;
+			}
+			
+			p2 = interpolated[xCoord + i - 1][zCoord + j - 1];
+			
+			if (i == 1){
+				p3 = interpolated[xCoord + i - 1][zCoord + j];
+			}
+			else{
+				p3 = interpolated[xCoord + i][zCoord + j + 1];
+			}
+			
+			//check if point is inside this triangle
+			if (isPointInTriangle(p1, p2, p3, glm::vec3(x, 0, z))){
+				break;
+			}
+
+
+		}
+	}
+
+	glm::vec3 v1 = p2 - p1;
+	glm::vec3 v2 = p3 - p1;
+
+	glm::vec3 n = glm::cross(v1, v2);
+	float d = glm::dot(n, v1);
+	return (d - n.x*v1.x - n.z *v1.z) / n.y;
+}
+
+//stolen directly from http://blackpawn.com/texts/pointinpoly/
+bool Chunk::isPointInTriangle(glm::vec3 a, glm::vec3 b, glm::vec3 c, glm::vec3 p){
+
+	// Compute vectors        
+	glm::vec3 v0 = c - a;
+	glm::vec3 v1 = b - a;
+	glm::vec3 v2 = p - a;
+
+	// Compute dot products
+	float dot00 = glm::dot(v0, v0);
+	float dot01 = glm::dot(v0, v1);
+	float dot02 = glm::dot(v0, v2);
+	float dot11 = glm::dot(v1, v1);
+	float dot12 = glm::dot(v1, v2);
+	
+	// Compute barycentric coordinates
+	float invDenom = 1 / (dot00 * dot11 - dot01 * dot01);
+	float u = (dot11 * dot02 - dot01 * dot12) * invDenom;
+	float v = (dot00 * dot12 - dot01 * dot02) * invDenom;
+
+	// Check if point is in triangle
+	return (u >= 0) && (v >= 0) && (u + v < 1);
 }
 
 void Chunk::generateEBO(){
@@ -103,6 +185,14 @@ void Chunk::generateEBO(){
 			order.push_back(k + i*interpolated[i].size() + interpolated[i].size() + 1);	//point next to point below first point
 		}
 	}
+}
+
+int Chunk::getOffsetX(){
+	return offsetX;
+}
+
+int Chunk::getOffsetZ(){
+	return offsetZ;
 }
 
 vector<glm::vec3> Chunk::flatten()
@@ -144,12 +234,30 @@ vector<vector<glm::vec3>> Chunk::interpolate(vector<vector<glm::vec3>> array, fl
 
 	for (int i = 0; i < array.size(); i++){
 		vector<glm::vec3> temp;
-		for (int j = 1; j < array[i].size() - 2; j++){
+		for (int j = 0; j < array[i].size(); j++){
 			//gets necessary points
-			glm::vec3 p = array[i][j - 1];
-			glm::vec3 p2 = array[i][j];
-			glm::vec3 p3 = array[i][j + 1];
-			glm::vec3 p4 = array[i][j + 2];
+			glm::vec3 p;
+			glm::vec3 p2;
+			glm::vec3 p3;
+			glm::vec3 p4;
+
+			p2 = array[i][j];
+
+			if (j < 1){
+				p = array[i][j];
+			}
+			else{
+				p = array[i][j - 1];
+			}
+
+			if (j >= array[i].size() - 2){
+				p3 = array[i][j];
+				p4 = array[i][j];
+			}
+			else{
+				p3 = array[i][j + 1];
+				p4 = array[i][j + 2];
+			}
 
 			//creates control matrix
 			glm::mat4x3 control(p[0], p[1], p[2],
@@ -225,6 +333,13 @@ void Chunk::update() {
 	shader->setMat4("model_matrix", model_matrix);
 
 	glBindVertexArray(VAO);
-	glDrawElements(GL_TRIANGLES, interpolated.size(), GL_UNSIGNED_INT, NULL);
+	glDrawElements(GL_TRIANGLES, order.size(), GL_UNSIGNED_INT, NULL);
 	glBindVertexArray(0);
+}
+
+float Chunk::randomFloat(float a, float b) {
+	float random = ((float)rand()) / (float)RAND_MAX;
+	float diff = b - a;
+	float r = random * diff;
+	return a + r;
 }

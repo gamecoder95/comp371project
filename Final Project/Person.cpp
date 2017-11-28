@@ -142,8 +142,8 @@ float Person::calcY(){
 	if (fly_flag){
 		return position[1];
 	}
-	return position[1]; //temporary
-	//return land->getHeightAt(position[0], position[2]);
+	land->getHeightAt(position[0], position[2]);
+	return position[1];
 }
 // -------------------- Collision Functions ----------------------------------------------
 
